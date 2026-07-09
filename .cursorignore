@@ -1,0 +1,122 @@
+# ==========================================================
+# Smart Issue & Task Tracker — .gitignore
+# Stack: Java 25+, Spring Boot, Maven, Docker
+# ==========================================================
+
+### Compilação / Build ###
+target/
+build/
+out/
+*.class
+*.jar
+*.war
+!.mvn/wrapper/maven-wrapper.jar
+
+### Maven ###
+.mvn/wrapper/maven-wrapper.properties
+mvnw
+mvnw.cmd
+
+### Gradle (caso migres futuramente) ###
+.gradle/
+gradle-app.setting
+!gradle-wrapper.jar
+
+### IDEs ###
+# IntelliJ IDEA
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+
+### Segredos e Configurações Sensíveis ###
+# CRÍTICO: nunca permitir que o agente leia credenciais reais
+.env
+.env.*
+!.env.example
+application-secrets.yml
+application-local.yml
+application-prod.yml
+*.pem
+*.key
+*.p12
+*.jks
+**/secrets/**
+
+# Eclipse
+.apt_generated/
+.classpath
+.factorypath
+.project
+.settings/
+.springBeans
+.sts4-cache/
+
+### IDEs (metadados irrelevantes para o agente) ###
+.idea/
+.vscode/
+.settings/
+*.iml
+
+# NetBeans
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+
+### Cursor / IA (agentes) ###
+.cursor/
+.cursor-cache/
+.cursor-tmp/
+*.cursor-context
+
+### Sistema Operativo ###
+.DS_Store
+Thumbs.db
+desktop.ini
+
+### Logs ###
+*.log
+logs/
+spring.log
+
+### Ficheiros Binários / Grandes ###
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.svg
+*.pdf
+*.zip
+*.tar.gz
+
+### Testes ###
+/test-output/
+*.hprof
+
+### Docker ###
+docker-compose.override.yml
+
+### Bases de Dados Locais ###
+*.db
+*.sqlite
+
+### Cobertura de Testes (JaCoCo, etc.) ###
+*.exec
+/coverage/
+
+### Documentação Gerada ###
+/site/
+/docs/generated/
+
+### Ficheiros Temporários ###
+*.tmp
+*.bak
+*.swp
+*~
+
+# Nota: manter README.md, .cursorrules e ficheiros de código-fonte
+# (src/**/*.java) sempre visíveis ao agente — não os excluir aqui.

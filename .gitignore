@@ -1,24 +1,83 @@
-# Compiled class file
+# .gitignore
+# Adequado ao stack: Java 25+, Maven, Spring Boot, Docker
+ 
+### Maven
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+ 
+### Gradle (caso optes por Gradle em vez de Maven)
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+ 
+### Compilados
 *.class
-
-# Log file
-*.log
-
-# BlueJ files
-*.ctxt
-
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
-
-# Package Files #
 *.jar
 *.war
-*.nar
 *.ear
-*.zip
-*.tar.gz
-*.rar
-
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
-hs_err_pid*
-replay_pid*
+ 
+### Logs
+*.log
+logs/
+spring.log
+ 
+### Variáveis de ambiente e segredos
+.env
+.env.local
+.env.*.local
+application-local.yml
+application-secrets.yml
+*.pem
+*.key
+*.p12
+*.jks
+ 
+### IDEs
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+.settings/
+.classpath
+.project
+.factorypath
+bin/
+ 
+### Sistema operativo
+.DS_Store
+Thumbs.db
+desktop.ini
+ 
+### Docker
+docker-data/
+postgres-data/
+kafka-data/
+rabbitmq-data/
+grafana-data/
+prometheus-data/
+*.pid
+ 
+### Testes e cobertura
+coverage/
+*.exec
+jacoco/
+/test-results/
+ 
+### Ficheiros temporários
+*.tmp
+*.bak
+*.swp
+*~
+ 
+### Node (caso exista frontend acoplado)
+node_modules/
+npm-debug.log*

@@ -1,0 +1,96 @@
+# Smart Issue & Task Tracker — Regras para Agentes de IA (Cursor)
+
+Este ficheiro define as convenções obrigatórias que qualquer agente de IA
+deve seguir ao gerar, editar ou refatorar código neste repositório.
+O objetivo é manter coerência arquitetural ao longo de todo o projeto,
+independentemente de quem (ou o quê) escreve o código.
+
+## 1. Contexto do Projeto
+
+- Nome: Smart Issue & Task Tracker
+- Tipo: Sistema orientado a eventos, com priorização de issues via IA
+- Linguagem: Java 25+ (usar sempre sintaxe moderna: records, pattern
+  matching, virtual threads, sealed classes quando aplicável)
+- Framework: Spring Boot 3.x+
+- Build: Maven
+
+## 2. Stack Tecnológica (não alterar sem justificação explícita)
+
+- Persistência: JPA/Hibernate + PostgreSQL
+- Streaming de eventos: Apache Kafka
+- Notificações assíncronas: RabbitMQ
+- IA: Spring AI (priorização semântica de issues)
+- Segurança: Spring Security + JWT
+- Concorrência: Virtual Threads (Project Loom)
+- Observabilidade: Prometheus + Grafana (via Micrometer/Actuator)
+- Containerização: Docker / Docker Compose
+
+## 3. Arquitetura e Organização de Pacotes
+
+Respeitar sempre a separação por responsabilidade, seguindo a estrutura
+já definida em `/src/main/java/com/teuprojeto/issuetracker/`:
+
+    config/       → configurações de beans (Kafka, RabbitMQ, Security, AI)
+    domain/       → entidades e eventos de domínio
+    repository/   → interfaces Spring Data JPA
+    service/      → lógica de negócio (nunca acede a HttpServletRequest)
+    messaging/    → produtores e consumidores (kafka/ e rabbitmq/)
+    controller/   → apenas orquestração HTTP; sem lógica de negócio
+    dto/          → request/ e response/, sempre como `record`
+    mapper/       → conversão entre entidade e DTO (MapStruct)
+    security/      → JWT, filtros, UserDetailsService
+    exception/    → exceções de domínio + GlobalExceptionHandler
+
+Regra fundamental: **controllers nunca devem receber ou devolver
+entidades JPA diretamente.** Usar sempre DTOs.
+
+## 4. Convenções de Código
+
+- DTOs devem ser `record`, nunca classes mutáveis.
+- Entidades JPA usam `UUID` como chave primária (não usar `Long`
+  autoincremental).
+- Toda a lógica assíncrona (consumidores Kafka/RabbitMQ, chamadas
+  a serviços externos) deve correr sobre Virtual Threads — nunca criar
+  `Thread` ou `ExecutorService` manual sem justificar.
+- Eventos de domínio (`*Event`) são imutáveis e residem em
+  `domain/event/`.
+- Nunca expor stack traces ou mensagens de exceção internas nas
+  respostas da API; usar `GlobalExceptionHandler` para normalizar erros.
+- Chamadas ao Spring AI devem ter fallback obrigatório (ex.: prioridade
+  `MEDIUM` por defeito) em caso de falha ou timeout do modelo.
+
+## 5. Testes
+
+- Toda a nova funcionalidade de serviço deve ser acompanhada de teste
+  unitário (JUnit 5 + Mockito).
+- Fluxos que envolvam Kafka, RabbitMQ ou PostgreSQL devem ser testados
+  com Testcontainers — nunca mockar o broker inteiro quando existir
+  Testcontainer disponível.
+- Não gerar testes triviais que apenas validem getters/setters.
+
+## 6. Segurança (não negociável)
+
+- Nunca sugerir ou gerar segredos, chaves de API ou passwords em texto
+  plano no código-fonte. Usar sempre variáveis de ambiente ou
+  `application-secrets.yml` (ignorado pelo Git).
+- Todos os endpoints, exceto autenticação, devem exigir JWT válido.
+- Validar sempre `Role` antes de operações de escrita sensíveis
+  (alteração de status, atribuição de issues).
+
+## 7. Estilo de Resposta do Agente
+
+- Ao propor alterações, explicar brevemente o raciocínio arquitetural
+  antes do código, especialmente quando a mudança atravessa mais de
+  uma camada.
+- Preferir alterações incrementais e testáveis a reescritas amplas.
+- Sinalizar sempre que uma sugestão implique alterar a stack ou a
+  estrutura de diretórios definida.
+
+## 8. O Que Evitar
+
+- Não introduzir novas dependências sem indicar explicitamente a
+  necessidade e o impacto.
+- Não misturar lógica de negócio dentro de `controller/` ou
+  `messaging/consumer/`.
+- Não usar `@Autowired` em campos; preferir injeção via construtor.
+- Não ignorar exceções de forma silenciosa (`catch` vazio).
