@@ -1,7 +1,7 @@
 ---
 status: estável
-última-atualização: 2025-01-XX
-responsável: teu nome
+última-atualização: 2026-07-09
+responsável: matevz77
 ---
 
 # 07 — Segurança

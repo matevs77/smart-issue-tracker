@@ -1,7 +1,7 @@
 ---
 status: estável
-última-atualização: 2025-01-XX
-responsável: teu nome
+última-atualização: 2026-07-09
+responsável: matevz77
 ---
 
 # 05 — Migrações (Flyway)
@@ -49,24 +49,26 @@ spring:
 
 | Versão | Descrição | Dependências |
 |--------|-----------|-------------|
-| V1 | Criar tabela tb_users | Nenhuma |
-| V2 | Criar tabela tb_issues | V1 (FK para tb_users) |
-| V3 | Criar tabela tb_comments | V1, V2 (FK para tb_issues e tb_users) |
-| V4 | Criar tabela tb_notifications | V1 (FK para tb_users) |
+| V1 | Criar tabela tb_issues | Nenhuma |
+| V2 | Criar tabela tb_comments | V1 (FK para tb_issues) |
+| V3 | Criar tabela tb_users | Nenhuma |
+| V4 | Criar tabela tb_notifications | V3 (FK para tb_users) |
 | V5 | Adicionar índices | V1-V4 |
-| V6 | (Futuro) Criar tabela de auditoria de prioridade | V2 |
-| V7 | (Futuro) Adicionar coluna de refresh_token | V1 |
+| V6 | (Futuro) Criar tabela de auditoria de prioridade | V1 |
+| V7 | (Futuro) Adicionar coluna de refresh_token | V3 |
 
-## 5. Exemplo: V1__create_users_table.sql
+## 5. Exemplo: V1__create_issue_table.sql
 
 ```sql
-CREATE TABLE tb_users (
+CREATE TABLE tb_issues (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    username VARCHAR(50) NOT NULL UNIQUE,
-    email VARCHAR(255) NOT NULL UNIQUE,
-    password_hash VARCHAR(255) NOT NULL,
-    role VARCHAR(20) NOT NULL CHECK (role IN ('ADMIN', 'DEVELOPER', 'VIEWER')),
-    active BOOLEAN NOT NULL DEFAULT true,
-    created_at TIMESTAMP NOT NULL DEFAULT now()
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    status VARCHAR(20) NOT NULL CHECK (status IN ('OPEN', 'IN_PROGRESS', 'RESOLVED', 'CLOSED')),
+    priority VARCHAR(20) NOT NULL CHECK (priority IN ('LOW', 'MEDIUM', 'HIGH', 'CRITICAL')),
+    assigned_to UUID REFERENCES tb_users(id),
+    created_by UUID NOT NULL REFERENCES tb_users(id),
+    created_at TIMESTAMP NOT NULL DEFAULT now(),
+    updated_at TIMESTAMP NOT NULL DEFAULT now()
 );
 ```

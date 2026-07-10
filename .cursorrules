@@ -25,24 +25,23 @@ independentemente de quem (ou o quê) escreve o código.
 - Observabilidade: Prometheus + Grafana (via Micrometer/Actuator)
 - Containerização: Docker / Docker Compose
 
-## 3. Arquitetura e Organização de Pacotes
+## 3. Arquitetura e Organização de Pacotes (Hexagonal / ADR-02)
 
 Respeitar sempre a separação por responsabilidade, seguindo a estrutura
-já definida em `/src/main/java/com/teuprojeto/issuetracker/`:
+já definida em `/src/main/java/com/teuprojecto/tracker/`:
 
-    config/       → configurações de beans (Kafka, RabbitMQ, Security, AI)
-    domain/       → entidades e eventos de domínio
-    repository/   → interfaces Spring Data JPA
-    service/      → lógica de negócio (nunca acede a HttpServletRequest)
-    messaging/    → produtores e consumidores (kafka/ e rabbitmq/)
-    controller/   → apenas orquestração HTTP; sem lógica de negócio
-    dto/          → request/ e response/, sempre como `record`
-    mapper/       → conversão entre entidade e DTO (MapStruct)
-    security/      → JWT, filtros, UserDetailsService
-    exception/    → exceções de domínio + GlobalExceptionHandler
+    issue/
+      domain/         → entidades, eventos, value objects e interfaces de repositório
+      application/    → serviços de aplicação, use cases, DTOs de entrada/saída
+      infrastructure/ → implementações concretas (JPA, Kafka, RabbitMQ, mappers)
+      presentation/    → controllers REST, handlers de exceção, WebSocket
 
-Regra fundamental: **controllers nunca devem receber ou devolver
-entidades JPA diretamente.** Usar sempre DTOs.
+    shared/
+      domain/       → base classes, eventos genéricos, enums
+      infrastructure/ → configurações transversais (security, flyway, jackson)
+
+Regra fundamental: **a camada de domínio não depende de frameworks.**
+A camada de presentation nunca acede diretamente à infrastructure.
 
 ## 4. Convenções de Código
 
@@ -53,7 +52,7 @@ entidades JPA diretamente.** Usar sempre DTOs.
   a serviços externos) deve correr sobre Virtual Threads — nunca criar
   `Thread` ou `ExecutorService` manual sem justificar.
 - Eventos de domínio (`*Event`) são imutáveis e residem em
-  `domain/event/`.
+  `issue/domain/` ou `shared/domain/`.
 - Nunca expor stack traces ou mensagens de exceção internas nas
   respostas da API; usar `GlobalExceptionHandler` para normalizar erros.
 - Chamadas ao Spring AI devem ter fallback obrigatório (ex.: prioridade
@@ -90,7 +89,7 @@ entidades JPA diretamente.** Usar sempre DTOs.
 
 - Não introduzir novas dependências sem indicar explicitamente a
   necessidade e o impacto.
-- Não misturar lógica de negócio dentro de `controller/` ou
-  `messaging/consumer/`.
+- Não misturar lógica de negócio dentro de `presentation/` ou
+  `infrastructure/messaging/`.
 - Não usar `@Autowired` em campos; preferir injeção via construtor.
 - Não ignorar exceções de forma silenciosa (`catch` vazio).

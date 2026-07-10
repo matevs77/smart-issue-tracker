@@ -1,7 +1,7 @@
 ---
 status: proposto
-última-atualização: 2025-01-XX
-responsável: teu nome
+última-atualização: 2026-07-9
+responsável: matevz77
 ---
 
 # ADR-04 — Virtual Threads para Concorrência

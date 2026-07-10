@@ -1,7 +1,7 @@
 ---
 status: em revisão
-última-atualização: 2025-01-XX
-responsável: teu nome
+última-atualização: 2026-07-09
+responsável: matevz77
 ---
 
 # STATUS — Estado Atual de Implementação
@@ -41,7 +41,7 @@ responsável: teu nome
 
 | Item | Status | Notas |
 |------|--------|-------|
-| Comment domain | 📋 | Estrutura criada |
+| Comment domain | ⚡ | implementado sem testes |
 | Comment application | 📋 | Estrutura criada |
 | Comment infrastructure | 📋 | Estrutura criada |
 | Comment presentation | 📋 | Estrutura criada |
@@ -50,7 +50,7 @@ responsável: teu nome
 
 | Item | Status | Notas |
 |------|--------|-------|
-| Notification domain | 📋 | Estrutura criada |
+| Notification domain | ⚡ | implementado sem testes |
 | Notification application | 📋 | Estrutura criada |
 | Notification infrastructure | 📋 | Estrutura criada |
 | NotificationProducer | 📋 | Estrutura criada |
@@ -60,7 +60,7 @@ responsável: teu nome
 
 | Item | Status | Notas |
 |------|--------|-------|
-| User domain | 📋 | Estrutura criada |
+| User domain | ⚡ | implementado sem testes |
 | User application | 📋 | Estrutura criada |
 | User infrastructure | 📋 | Estrutura criada |
 | User presentation | 📋 | Estrutura criada |
@@ -86,6 +86,11 @@ responsável: teu nome
 
 | Item | Status | Notas |
 |------|--------|-------|
+| IssuePriority | ⚡ | implementado sem testes |
+| IsuueStatus | ⚡ | implementado sem testes |
+| NotificationStatus | ⚡ | implementado sem testes |
+| NotificationType | ⚡ | implementado sem testes |
+| Role | ⚡ | implementado sem testes |
 | DomainEvent | 📋 | Estrutura criada |
 | GlobalExceptionHandler | 📋 | Estrutura criada |
 | Util classes | 📋 | Pasta vazia |
