@@ -1,6 +1,6 @@
 ---
 status: estável
-última-atualização: 2026-07-09
+última-atualização: 2026-07-10
 responsável: matevz77
 ---
 
@@ -113,6 +113,62 @@ PATCH /api/v1/issues/{id}/priority
 }
 ```
 
+### 3.6. Reatribuir Responsável (ADMIN / DEVELOPER)
+
+```
+PATCH /api/v1/issues/{id}/assignee
+```
+
+**Request:**
+```json
+{
+  "assigneeId": "880e8400-e29b-41d4-a716-446655440003"
+}
+```
+
+**Response (200):**
+```json
+{
+  "id": "660e8400-e29b-41d4-a716-446655440001",
+  "assignee": { "id": "880e8400-e29b-41d4-a716-446655440003", "username": "joao" },
+  "updatedAt": "2025-01-15T12:00:00Z"
+}
+```
+
+### 3.7. Eliminar Issue (ADMIN)
+
+```
+DELETE /api/v1/issues/{id}
+```
+
+**Response (204):** Sem conteúdo.
+
+**Segurança:** Apenas utilizadores com Role.ADMIN podem aceder a este endpoint. Tentativas por DEVELOPER ou VIEWER resultam em `403 FORBIDDEN`. A operação é irreversível: remove a issue e todos os seus comentários em cascata. Notificações já emitidas não são afetadas.
+
+### 3.8. Editar Título e Descrição (ADMIN / DEVELOPER)
+
+```
+PATCH /api/v1/issues/{id}/details
+```
+
+**Request:**
+```json
+{
+  "title": "Falha na autenticação 2FA — corrigida parcialmente",
+  "description": "O erro 500 foi identificado no validador de tokens. Aguarda deploy."
+}
+```
+
+**Response (200):**
+```json
+{
+  "id": "660e8400-e29b-41d4-a716-446655440001",
+  "title": "Falha na autenticação 2FA — corrigida parcialmente",
+  "description": "O erro 500 foi identificado no validador de tokens. Aguarda deploy.",
+  "updatedAt": "2025-01-15T14:00:00Z"
+}
+```
+
 ## 4. Comentários
 
 ### 4.1. Adicionar Comentário
@@ -156,7 +212,39 @@ GET /api/v1/issues/{issueId}/comments
 | 422 | UNPROCESSABLE_ENTITY | Regra de negócio violada (ex.: VIEWER a tentar alterar estado) |
 | 500 | INTERNAL_ERROR | Erro interno do servidor |
 
-## 6. Paginação e Filtros
+## 6. Utilizadores
+
+### 6.1. Criar Utilizador (ADMIN)
+
+```
+POST /api/v1/users
+```
+
+**Request:**
+```json
+{
+  "username": "maria",
+  "email": "maria@example.com",
+  "password": "s3gur4#2025",
+  "role": "DEVELOPER"
+}
+```
+
+**Response (201):**
+```json
+{
+  "id": "770e8400-e29b-41d4-a716-446655440002",
+  "username": "maria",
+  "email": "maria@example.com",
+  "role": "DEVELOPER",
+  "active": true,
+  "createdAt": "2025-01-15T11:00:00Z"
+}
+```
+
+**Segurança:** Apenas utilizadores com Role.ADMIN podem aceder a este endpoint. Tentativas de acesso por DEVELOPER ou VIEWER resultam em `403 FORBIDDEN`.
+
+## 7. Paginação e Filtros
 
 Todos os endpoints de listagem suportam:
 

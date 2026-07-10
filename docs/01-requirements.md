@@ -1,6 +1,6 @@
 ---
 status: estável
-última-atualização: 2026-07-09
+última-atualização: 2026-07-10
 responsável: matevz77
 ---
 
@@ -42,6 +42,11 @@ Esta é a stack obrigatória, já validada quanto à viabilidade técnica. Qualq
 | RF-04 | Apenas utilizadores com Role.ADMIN ou Role.DEVELOPER podem alterar o estado de uma issue |
 | RF-05 | Um ADMIN pode sobrepor manualmente a prioridade calculada pela IA |
 | RF-06 | Toda alteração manual de prioridade deve ser registada para fins de auditoria |
+| RF-14 | O sistema deve permitir listar issues de forma paginada, com filtros por status, prioridade, reporter e assignee. **Critério de aceitação:** conforme especificado em `docs/06-api-contract.md` secções 3.2 e 7 (Paginação e Filtros) |
+| RF-16 | Um ADMIN ou DEVELOPER deve poder reatribuir o responsável (assignee) de uma issue já existente. **Critério de aceitação:** conforme especificado em `docs/06-api-contract.md` secção 3.6 |
+| RF-17 | O sistema deve impedir o fecho (CLOSED) de uma issue sem descrição de resolução. **Critério de aceitação:** conforme especificado na regra de negócio RN-05 em `docs/03-domain-model.md` secção 3 |
+| RF-18 | O sistema deve permitir eliminar uma issue (hard delete). A operação remove irreversivelmente a issue e os seus comentários em cascata, mas preserva as notificações já emitidas. **Critério de aceitação:** conforme especificado em `docs/06-api-contract.md` secção 3.7; o comportamento em cascata está definido em `docs/04-data-model.md` secções 4 e 5 |
+| RF-19 | Um ADMIN ou DEVELOPER deve poder editar o título e a descrição de uma issue já existente. **Critério de aceitação:** conforme especificado em `docs/06-api-contract.md` secção 3.8; o acesso ao endpoint segue a mesma regra de autorização da RN-01 |
 
 ### 3.2. Comentários
 
@@ -49,6 +54,7 @@ Esta é a stack obrigatória, já validada quanto à viabilidade técnica. Qualq
 |----|-----------|
 | RF-07 | O sistema deve permitir adicionar comentários a uma issue existente |
 | RF-08 | O autor original da issue deve ser notificado ao receber um novo comentário |
+| RF-15 | O sistema deve permitir listar todos os comentários associados a uma issue. **Critério de aceitação:** conforme especificado em `docs/06-api-contract.md` secção 4.2 |
 
 ### 3.3. Notificações
 
@@ -63,6 +69,7 @@ Esta é a stack obrigatória, já validada quanto à viabilidade técnica. Qualq
 |----|-----------|
 | RF-11 | O sistema deve autenticar utilizadores via credenciais (username/password) e emitir token JWT |
 | RF-12 | O sistema deve restringir o acesso a endpoints consoante o Role do utilizador autenticado |
+| RF-13 | O sistema deve permitir a criação de utilizadores, incluindo a definição do seu Role (ADMIN, DEVELOPER, VIEWER) |
 
 ## 4. Requisitos Não-Funcionais
 
@@ -104,6 +111,7 @@ As funcionalidades seguintes são reconhecidamente valiosas, mas foram deliberad
 | Dashboard de utilizador (frontend web) | Fora do escopo de backend que o projeto pretende demonstrar |
 | Multi-tenancy | Introduz complexidade significativa no modelo de dados e na segurança; requer decisão arquitetural própria (candidato a ADR futuro) |
 | Refresh token com rotação | O MVP usa apenas access token com expiração curta; rotação de refresh token é uma melhoria de segurança de fase 2 |
+| Blacklist de tokens revogados (logout servidor) | O MVP adota logout cliente-side por simplicidade e coerência stateless; a blacklist requer Redis ou tabela adicional e quebra o stateless, sendo justificável apenas com refresh token (também fase 2) |
 | Auditoria completa (histórico de todas as alterações) | O MVP regista apenas auditoria da sobreposição manual de prioridade (RF-06); um sistema de auditoria genérico é mais abrangente |
 
 ## 7. Fora de Escopo (não planeado)

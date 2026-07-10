@@ -130,3 +130,16 @@ CREATE INDEX idx_notifications_status ON tb_notifications(status);
 - A constraint CHECK de `status` não permite NULL (toda issue nasce com status definido).
 - `ON DELETE CASCADE` em `tb_comments.issue_id`: remover uma issue remove todos os comentários associados.
 - `ON DELETE RESTRICT` em FKs de `tb_users`: não é possível remover um utilizador com issues ou comentários associados.
+- As notificações (`tb_notifications`) não têm FK direta para `tb_issues`; a eliminação de uma issue não afeta notificações já emitidas.
+
+## 5. Estratégia de Eliminação
+
+Adota-se **hard delete** como estratégia única para todas as entidades:
+
+| Entidade | Estratégia | Comportamento |
+|----------|-----------|---------------|
+| Issue | Hard delete (`DELETE FROM tb_issues`) | Remove a issue e cascateia para `tb_comments` via `ON DELETE CASCADE`; notificações existentes são preservadas |
+| Comment | Hard delete (via cascade da issue ou `DELETE FROM tb_comments`) | Não há eliminação isolada de comentários — seguem o ciclo de vida da issue |
+| Notification | Hard delete (apenas administrativo, sem endpoint público) | Sem FK para issue, não sofre cascata; pode ser limpa periodicamente por script de retenção (fase 2) |
+
+**Nota:** Não se usa `deleted_at` ou soft delete em nenhuma tabela. A decisão baseia-se na simplicidade operacional e na ausência de requisitos de recuperação de issues eliminadas no MVP. Se a auditoria completa (histórico de alterações) vier a ser necessária na fase 2, deve ser implementada com uma tabela de eventos separada, não com soft delete nas entidades de domínio.

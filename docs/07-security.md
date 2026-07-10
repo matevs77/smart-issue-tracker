@@ -90,7 +90,17 @@ cors:
 
 Estratégia prevista: token bucket por IP ou por utilizador autenticado, usando `Bucket4j` ou filtro Spring personalizado.
 
-## 8. Checklist OWASP Básica
+## 8. Logout / Revogação de Tokens
+
+O sistema adota uma abordagem **stateless** para sessões: não existe estado de sessão no servidor, e o token JWT é autossuficiente. Consequentemente, não há endpoint de logout servidor nem blacklist de tokens revogados.
+
+- O cliente é responsável por descartar o token localmente (removendo-o do *localStorage* / *sessionStorage* ou do estado da aplicação) quando o utilizador termina a sessão.
+- O token mantém-se tecnicamente válido até expirar (1h), mas sem o token o cliente não consegue fazer requisições autenticadas.
+- Esta decisão baseia-se na curta janela de expiração (1h), na simplicidade operacional e na ausência de requisitos de revogação imediata no MVP.
+
+Para um mecanismo de revogação servidor (Fase 2), ver `docs/01-requirements.md` secção 6.
+
+## 9. Checklist OWASP Básica
 
 - [x] Passwords armazenadas com BCrypt (nunca em plain text)
 - [x] Token JWT assinado e validado em cada requisição

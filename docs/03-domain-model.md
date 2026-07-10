@@ -1,6 +1,6 @@
 ---
 status: estável
-última-atualização: 2026-07-09
+última-atualização: 2026-07-10
 responsável: matevz77
 ---
 
@@ -100,6 +100,8 @@ PENDING → SENT
 | RN-05 | Uma issue só pode ser fechada (CLOSED) se tiver resolução associada (descrição obrigatória) | UpdateIssueUseCase |
 | RN-06 | O autor de um comentário não pode ser notificado do seu próprio comentário | CommentService |
 | RN-07 | Utilizadores com ROLE_VIEWER têm acesso apenas de leitura a issues | SecurityConfig / JwtAuthFilter |
+| RN-08 | A criação de novos utilizadores é uma operação restrita a ADMIN — não existe registo público | UserService |
+| RN-09 | A reatribuição de assignee deve gerar uma notificação ao novo responsável, reutilizando o fluxo definido em RF-09 | IssueService / NotificationService |
 
 ## 4. Separação Domínio vs. JPA
 
