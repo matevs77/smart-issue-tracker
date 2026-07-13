@@ -1,6 +1,6 @@
 ---
 status: estável
-última-atualização: 2026-07-09
+última-atualização: 2026-07-13
 responsável: matevz77
 ---
 
@@ -108,5 +108,5 @@ Para um mecanismo de revogação servidor (Fase 2), ver `docs/01-requirements.md
 - [x] CORS configurado com whitelist de origens
 - [ ] Rate limiting (pendente)
 - [ ] Content Security Policy headers (pendente)
-- [ ] Validação de input com Bean Validation (@NotBlank, @Size, etc.)
+- [x] Validação de input com Bean Validation (@NotBlank, @Size, etc.) — ver RNF-07 em `docs/01-requirements.md` secção 4
 - [ ] Segredo JWT externo (via variável de ambiente `JWT_SECRET`), nunca no código-fonte

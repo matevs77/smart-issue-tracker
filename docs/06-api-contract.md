@@ -1,6 +1,6 @@
 ---
 status: estável
-última-atualização: 2026-07-10
+última-atualização: 2026-07-13
 responsável: matevz77
 ---
 
@@ -243,6 +243,36 @@ POST /api/v1/users
 ```
 
 **Segurança:** Apenas utilizadores com Role.ADMIN podem aceder a este endpoint. Tentativas de acesso por DEVELOPER ou VIEWER resultam em `403 FORBIDDEN`.
+
+## 8. Notificações
+
+### 8.1. Listar Notificações do Utilizador Autenticado
+
+```
+GET /api/v1/notifications?page=0&size=20
+```
+
+**Response (200):**
+```json
+{
+  "content": [
+    {
+      "id": "990e8400-e29b-41d4-a716-446655440010",
+      "type": "ISSUE_ASSIGNED",
+      "message": "Foi-lhe atribuída a issue 'Falha na autenticação 2FA'",
+      "issueId": "660e8400-e29b-41d4-a716-446655440001",
+      "read": false,
+      "createdAt": "2025-01-15T10:31:00Z"
+    }
+  ],
+  "page": 0,
+  "size": 20,
+  "totalElements": 5,
+  "totalPages": 1
+}
+```
+
+**Segurança:** O endpoint retorna apenas notificações do utilizador autenticado. O `userId` é extraído do token JWT — não é aceite como parâmetro.
 
 ## 7. Paginação e Filtros
 

@@ -1,6 +1,6 @@
 ---
 status: estável
-última-atualização: 2026-07-10
+última-atualização: 2026-07-13
 responsável: matevz77
 ---
 
@@ -62,6 +62,7 @@ Esta é a stack obrigatória, já validada quanto à viabilidade técnica. Qualq
 |----|-----------|
 | RF-09 | O sistema deve notificar o responsável atribuído quando uma issue for classificada |
 | RF-10 | O envio de notificações deve ser assíncrono e não deve bloquear o fluxo principal |
+| RF-20 | O sistema deve permitir a um utilizador autenticado consultar o seu histórico de notificações, paginado. **Critério de aceitação:** conforme especificado em `docs/06-api-contract.md` secção 8 |
 
 ### 3.4. Autenticação e Autorização
 
@@ -81,6 +82,10 @@ Esta é a stack obrigatória, já validada quanto à viabilidade técnica. Qualq
 | RNF-04 | Observabilidade | Toda operação crítica (criação de issue, classificação, notificação) deve expor métricas via Prometheus |
 | RNF-05 | Segurança de dados | Nenhuma credencial ou segredo deve ser armazenado em texto plano no código-fonte |
 | RNF-06 | Idempotência | Consumidores Kafka e RabbitMQ devem tratar reentregas sem duplicar efeitos colaterais (ver `08-messaging.md`) |
+| RNF-07 | Validação de entrada | Todos os endpoints que recebem corpo de requisição devem validar os campos obrigatórios e os seus formatos (Bean Validation), devolvendo 400 INVALID_REQUEST em caso de violação, conforme `docs/06-api-contract.md` secção 5 |
+| RNF-08 | Uniformidade do modelo de erro | Toda resposta de erro da API deve seguir o formato RFC 7807 (Problem Details) definido em `docs/06-api-contract.md` secção 5, sem exceções |
+| RNF-09 | Logging estruturado em produção | Em ambiente de produção, todos os logs devem ser emitidos em formato JSON, conforme `docs/11-observability-and-runbook.md` secção 4, para permitir integração com ferramentas de agregação de logs |
+| RNF-10 | Limites de volume de dados suportados | O sistema deve suportar os seguintes volumes sem degradação significativa de desempenho: até 50.000 issues totais, média de 3 comentários por issue (máx. 20), até 500 utilizadores registados, até 1.000 notificações por utilizador, e concorrência de até 200 utilizadores virtuais conforme `docs/10-testing-strategy.md` secção 4.2 |
 
 ## 5. Escopo do MVP
 

@@ -54,7 +54,8 @@ A camada de presentation nunca acede diretamente à infrastructure.
 - Eventos de domínio (`*Event`) são imutáveis e residem em
   `issue/domain/` ou `shared/domain/`.
 - Nunca expor stack traces ou mensagens de exceção internas nas
-  respostas da API; usar `GlobalExceptionHandler` para normalizar erros.
+  respostas da API; usar `GlobalExceptionHandler` para normalizar erros
+  (ver RNF-08 em `docs/01-requirements.md` secção 4).
 - Chamadas ao Spring AI devem ter fallback obrigatório (ex.: prioridade
   `MEDIUM` por defeito) em caso de falha ou timeout do modelo.
 
