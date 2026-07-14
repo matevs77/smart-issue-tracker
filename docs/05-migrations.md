@@ -1,6 +1,6 @@
 ---
 status: estável
-última-atualização: 2026-07-09
+última-atualização: 2026-07-14
 responsável: matevz77
 ---
 
@@ -10,9 +10,10 @@ responsável: matevz77
 
 ```
 src/main/resources/db/migration/
-  ├── V1__create_issue_table.sql
-  ├── V2__create_comment_table.sql
-  ├── V3__create_notification_table.sql
+  ├── V1__create_user_table.sql
+  ├── V2__create_issue_table.sql
+  ├── V3__create_comment_table.sql
+  ├── V4__create_notification_table.sql
   └── ...
 ```
 
@@ -49,26 +50,32 @@ spring:
 
 | Versão | Descrição | Dependências |
 |--------|-----------|-------------|
-| V1 | Criar tabela tb_issues | Nenhuma |
-| V2 | Criar tabela tb_comments | V1 (FK para tb_issues) |
-| V3 | Criar tabela tb_users | Nenhuma |
-| V4 | Criar tabela tb_notifications | V3 (FK para tb_users) |
-| V5 | Adicionar índices | V1-V4 |
-| V6 | (Futuro) Criar tabela de auditoria de prioridade | V1 |
-| V7 | (Futuro) Adicionar coluna de refresh_token | V3 |
+| V1 | Criar tabela tb_users | Nenhuma |
+| V2 | Criar tabela tb_issues | V1 (FK para tb_users) |
+| V3 | Criar tabela tb_comments | V2 (FK para tb_issues), V1 (FK para tb_users) |
+| V4 | Criar tabela tb_notifications | V1 (FK para tb_users) |
+| V5 | Adicionar índices (tb_comments, tb_notifications) | V3, V4 |
+| V6 | (Futuro) Criar tabela de auditoria de prioridade | V2 |
+| V7 | (Futuro) Adicionar coluna de refresh_token | V1 |
 
-## 5. Exemplo: V1__create_issue_table.sql
+## 5. Exemplo: V2__create_issue_table.sql
 
 ```sql
 CREATE TABLE tb_issues (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    title VARCHAR(255) NOT NULL,
-    description TEXT,
+    title VARCHAR(200) NOT NULL,
+    description TEXT NOT NULL,
     status VARCHAR(20) NOT NULL CHECK (status IN ('OPEN', 'IN_PROGRESS', 'RESOLVED', 'CLOSED')),
-    priority VARCHAR(20) NOT NULL CHECK (priority IN ('LOW', 'MEDIUM', 'HIGH', 'CRITICAL')),
-    assigned_to UUID REFERENCES tb_users(id),
-    created_by UUID NOT NULL REFERENCES tb_users(id),
+    priority VARCHAR(20) CHECK (priority IN ('LOW', 'MEDIUM', 'HIGH', 'CRITICAL')),
+    ai_confidence_score DOUBLE PRECISION CHECK (ai_confidence_score >= 0.0 AND ai_confidence_score <= 1.0),
+    reporter_id UUID NOT NULL REFERENCES tb_users(id),
+    assignee_id UUID REFERENCES tb_users(id),
     created_at TIMESTAMP NOT NULL DEFAULT now(),
     updated_at TIMESTAMP NOT NULL DEFAULT now()
 );
+
+CREATE INDEX idx_issues_status ON tb_issues(status);
+CREATE INDEX idx_issues_reporter ON tb_issues(reporter_id);
+CREATE INDEX idx_issues_assignee ON tb_issues(assignee_id);
+CREATE INDEX idx_issues_created_at ON tb_issues(created_at DESC);
 ```

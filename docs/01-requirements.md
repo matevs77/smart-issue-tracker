@@ -1,6 +1,6 @@
 ---
 status: estável
-última-atualização: 2026-07-13
+última-atualização: 2026-07-14
 responsável: matevz77
 ---
 
@@ -118,6 +118,7 @@ As funcionalidades seguintes são reconhecidamente valiosas, mas foram deliberad
 | Refresh token com rotação | O MVP usa apenas access token com expiração curta; rotação de refresh token é uma melhoria de segurança de fase 2 |
 | Blacklist de tokens revogados (logout servidor) | O MVP adota logout cliente-side por simplicidade e coerência stateless; a blacklist requer Redis ou tabela adicional e quebra o stateless, sendo justificável apenas com refresh token (também fase 2) |
 | Auditoria completa (histórico de todas as alterações) | O MVP regista apenas auditoria da sobreposição manual de prioridade (RF-06); um sistema de auditoria genérico é mais abrangente |
+| Rastreio de leitura (read) e referência direta à issue de origem (issueId) nas notificações | Adiado por não ser exigido por nenhum RF atual, e por o campo issueId só ganhar valor prático com uma interface de utilizador, que está fora do escopo de backend do MVP (secção 5) |
 
 ## 7. Fora de Escopo (não planeado)
 

@@ -1,6 +1,6 @@
 ---
 status: estável
-última-atualização: 2026-07-13
+última-atualização: 2026-07-14
 responsável: matevz77
 ---
 
@@ -260,8 +260,7 @@ GET /api/v1/notifications?page=0&size=20
       "id": "990e8400-e29b-41d4-a716-446655440010",
       "type": "ISSUE_ASSIGNED",
       "message": "Foi-lhe atribuída a issue 'Falha na autenticação 2FA'",
-      "issueId": "660e8400-e29b-41d4-a716-446655440001",
-      "read": false,
+      "status": "PENDING",
       "createdAt": "2025-01-15T10:31:00Z"
     }
   ],
