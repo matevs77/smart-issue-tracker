@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: smart-issue-tracker
+  threads:
+    virtual:
+      enabled: false
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    baseline-version: 0
+
+server:
+  port: 8080

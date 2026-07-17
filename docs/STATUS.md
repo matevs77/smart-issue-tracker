@@ -1,6 +1,6 @@
 ---
 status: em revisão
-última-atualização: 2026-07-14
+última-atualização: 2026-07-17
 responsável: matevz77
 ---
 
@@ -24,19 +24,21 @@ responsável: matevz77
 | Issue domain entity | ✅ | Implementado (Issue.java, 99 linhas, regras de negócio) |
 | IssueJpaEntity | ✅ | Implementado (68 linhas, entidade JPA completa com índices e CHECK) |
 | IssueMapper | ✅ | Implementado (MapStruct, 18 linhas) |
+| IssueFilter | ⚡ | Implementado (record com status/priority/reporterId/assigneeId opcionais) |
 | IssueStatus enum (shared) | ⚡ | Implementado (shared/domain/IssueStatus.java) |
 | IssuePriority enum (shared) | ⚡ | Implementado (shared/domain/IssuePriority.java) |
-| IssueRepository interface | 📋 | Ficheiro vazio (0 linhas) |
-| CreateIssueUseCase | 📋 | Ficheiro vazio (0 linhas) |
-| UpdateIssueUseCase | 📋 | Ficheiro vazio (0 linhas) |
+| IssueRepository interface | ⚡ | Implementado (save, findById, findAll com filtro + paginação) |
+| IssueRepositoryAdapter | ⚡ | Implementado (especificações JPA + carregamento de User via UserJpaRepository) |
+| CreateIssueUseCase | ⚡ | Implementado (cria Issue, carrega reporter/assignee, persiste) |
+| UpdateIssueUseCase | 📋 | Pendente (depende de JWT da Fase 2 para validação de Role) |
 | IssueClassificationService | 📋 | Ficheiro vazio (0 linhas) |
 | IssueJpaRepository | ✅ | Implementado (extends JpaRepository) |
 | IssueEventPublisher | 📋 | Ficheiro não existe (events/ por criar) |
 | IssueEventConsumer | 📋 | Ficheiro não existe (events/ por criar) |
 | SpringAiClassifier | 📋 | Ficheiro vazio (0 linhas) |
-| IssueController | 📋 | Ficheiro vazio (0 linhas) |
-| CreateIssueRequest DTO | 📋 | Ficheiro vazio (0 linhas) |
-| IssueResponse DTO | 📋 | Ficheiro vazio (0 linhas) |
+| IssueController | ⚡ | Implementado (POST /, GET /{id}, GET / com filtros e paginação) |
+| CreateIssueRequest DTO | ⚡ | Implementado (inclui reporterId temporário — ver Nota de Scaffolding) |
+| IssueResponse DTO | ⚡ | Implementado (record com UserRef e CommentEntry aninhados) |
 | IssueUpdateRequest DTO | 📋 | Ficheiro vazio (0 linhas) |
 
 ## Módulo: Comment
@@ -110,6 +112,12 @@ responsável: matevz77
 | docker-compose.yml | 📋 | Ficheiro vazio |
 | Dockerfile | 📋 | Ficheiro vazio |
 | pom.xml | ✅ | Ficheiro completo com todas as dependências (Spring Boot, Kafka, RabbitMQ, Flyway, Testcontainers, etc.) |
+
+## Notas de Scaffolding
+
+| Nota | Descrição |
+|------|-----------|
+| reporterId em CreateIssueRequest | Incluído temporariamente como campo obrigatório porque o JWT (Fase 2) ainda não está implementado. `// TODO(Fase 2): remover e extrair do SecurityContext após JWT`. Eliminar quando o SecurityContext estiver operacional. |
 
 ## Documentação
 
