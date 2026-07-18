@@ -1,5 +1,6 @@
 package com.teuprojecto.tracker.shared.exception;
 
+import com.teuprojecto.tracker.user.domain.DuplicateUserException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
@@ -43,6 +44,15 @@ public class GlobalExceptionHandler {
         var problem = ProblemDetail.forStatusAndDetail(HttpStatus.UNPROCESSABLE_ENTITY, ex.getMessage());
         problem.setType(URI.create("https://api.issuetracker.dev/errors/unprocessable-entity"));
         problem.setTitle("UNPROCESSABLE_ENTITY");
+        problem.setInstance(URI.create(request.getRequestURI()));
+        return problem;
+    }
+
+    @ExceptionHandler(DuplicateUserException.class)
+    public ProblemDetail handleDuplicateUser(DuplicateUserException ex, HttpServletRequest request) {
+        var problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create("https://api.issuetracker.dev/errors/duplicate-user"));
+        problem.setTitle("CONFLICT");
         problem.setInstance(URI.create(request.getRequestURI()));
         return problem;
     }

@@ -65,10 +65,11 @@ responsável: matevz77
 
 | Item | Status | Notas |
 |------|--------|-------|
-| User domain | ⚡ | Implementado (User.java, 47 linhas) |
-| User application | 📋 | CreateUserUseCase criado (Prompt C) |
-| User infrastructure | ⚡ | JPA entity e mapper implementados; JpaRepository criado (Prompt C) |
-| User presentation | 📋 | Controller e DTOs criados (Prompt C) |
+| User domain | ⚡ | Implementado (User.java, 47 linhas); UserRepository alargado (save, findById, existsByUsername, existsByEmail); DuplicateUserException criada |
+| User application | ⚡ | CreateUserUseCase implementado (valida duplicados, hash BCrypt, persiste) |
+| User infrastructure | ⚡ | JPA entity, mapper e JpaRepository implementados; UserRepositoryAdapter implementado (save/existBy*) |
+| User presentation | ⚡ | Controller (POST /api/v1/users → 201) e DTOs criados; CreateUserRequest com validação Bean |
+| PasswordEncoderConfig | ⚡ | Implementado (security/PasswordEncoderConfig.java, BCrypt força 10) — distinto de SecurityConfig (Fase 2) |
 
 ## Segurança
 
@@ -118,6 +119,7 @@ responsável: matevz77
 | Nota | Descrição |
 |------|-----------|
 | reporterId em CreateIssueRequest | Incluído temporariamente como campo obrigatório porque o JWT (Fase 2) ainda não está implementado. `// TODO(Fase 2): remover e extrair do SecurityContext após JWT`. Eliminar quando o SecurityContext estiver operacional. |
+| Autorização ADMIN em POST /api/v1/users | RF-13 exige que a criação de utilizadores seja restrita a ADMIN, mas a validação de Role só é possível após a Fase 2 (JWT/SecurityContext). O endpoint está temporariamente sem autenticação/autorização. `// TODO(Fase 2): aplicar Role.ADMIN via SecurityConfig/JwtAuthFilter`. |
 
 ## Documentação
 
