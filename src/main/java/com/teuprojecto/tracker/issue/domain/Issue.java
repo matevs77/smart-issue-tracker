@@ -36,7 +36,7 @@ public class Issue {
         this.aiConfidenceScore = aiConfidenceScore;
         this.reporter = reporter;
         this.assignee = assignee;
-        this.comments = new ArrayList<>(comments);
+        this.comments = comments == null ? new ArrayList<>() : new ArrayList<>(comments);
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }

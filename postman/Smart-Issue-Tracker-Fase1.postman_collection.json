@@ -1,0 +1,172 @@
+{
+  "info": {
+    "name": "Smart Issue Tracker — Fase 1",
+    "description": "Coleção para testar os endpoints REST da Fase 1 (sem autenticação — SecurityFilterChain temporário). Ajusta {{baseUrl}} e os IDs conforme necessário.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "userId",
+      "value": ""
+    },
+    {
+      "key": "issueId",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Criar Utilizador (201)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "  const body = pm.response.json();",
+                  "  pm.collectionVariables.set('userId', body.id);",
+                  "  console.log('userId guardado:', body.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "users"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"maria\",\n  \"email\": \"maria@example.com\",\n  \"password\": \"s3gur4#2025\",\n  \"role\": \"DEVELOPER\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Criar Utilizador duplicado (409)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "users"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"maria\",\n  \"email\": \"maria@example.com\",\n  \"password\": \"s3gur4#2025\",\n  \"role\": \"DEVELOPER\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Criar Utilizador inválido (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "users"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"\",\n  \"email\": \"nao-e-email\",\n  \"password\": \"123\",\n  \"role\": \"\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Issues",
+      "item": [
+        {
+          "name": "Criar Issue (201)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "  const body = pm.response.json();",
+                  "  pm.collectionVariables.set('issueId', body.id);",
+                  "  console.log('issueId guardado:', body.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/issues",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "issues"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Falha na autenticação 2FA\",\n  \"description\": \"Utilizadores reportam erro 500 ao validar código 2FA\",\n  \"assigneeId\": null,\n  \"reporterId\": \"{{userId}}\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Obter Issue por ID (200/404)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/issues/{{issueId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "issues", "{{issueId}}"]
+            }
+          }
+        },
+        {
+          "name": "Obter Issue inexistente (404)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/issues/00000000-0000-0000-0000-000000000000",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "issues", "00000000-0000-0000-0000-000000000000"]
+            }
+          }
+        },
+        {
+          "name": "Listar Issues (filtros + paginação)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/issues?page=0&size=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "issues"],
+              "query": [
+                { "key": "page", "value": "0" },
+                { "key": "size", "value": "20" }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

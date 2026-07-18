@@ -52,9 +52,11 @@ spring:
 |--------|-----------|-------------|
 | V1 | Criar tabela tb_users | Nenhuma |
 | V2 | Criar tabela tb_issues | V1 (FK para tb_users) |
-| V3 | Criar tabela tb_comments | V2 (FK para tb_issues), V1 (FK para tb_users) |
+| V3 | Criar tabela tb_comments | V2 (FK para tb_issues, ON DELETE CASCADE), V1 (FK para tb_users) |
 | V4 | Criar tabela tb_notifications | V1 (FK para tb_users) |
 | V5 | Adicionar índices (tb_comments, tb_notifications) | V3, V4 |
+| V6 | (Futuro) Criar tabela de auditoria de prioridade | V2 |
+| V7 | (Futuro) Adicionar coluna de refresh_token | V1 |
 | V6 | (Futuro) Criar tabela de auditoria de prioridade | V2 |
 | V7 | (Futuro) Adicionar coluna de refresh_token | V1 |
 
