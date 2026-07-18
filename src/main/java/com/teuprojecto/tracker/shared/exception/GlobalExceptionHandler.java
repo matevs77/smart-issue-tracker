@@ -2,6 +2,7 @@ package com.teuprojecto.tracker.shared.exception;
 
 import com.teuprojecto.tracker.user.domain.DuplicateUserException;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -14,6 +15,7 @@ import java.net.URI;
 import java.util.Map;
 
 @RestControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -79,6 +81,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ProblemDetail handleGeneric(Exception ex, HttpServletRequest request) {
+        log.error("Unhandled exception at {}: {}", request.getRequestURI(), ex.getMessage(), ex);
         var problem = ProblemDetail.forStatus(HttpStatus.INTERNAL_SERVER_ERROR);
         problem.setType(URI.create("https://api.issuetracker.dev/errors/internal-error"));
         problem.setTitle("INTERNAL_ERROR");
