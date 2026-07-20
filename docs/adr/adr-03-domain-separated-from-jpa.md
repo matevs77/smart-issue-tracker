@@ -1,6 +1,6 @@
 ---
-status: proposto
-última-atualização: 2025-07-09
+status: aceite
+última-atualização: 2026-07-20
 responsável: matevz77
 ---
 

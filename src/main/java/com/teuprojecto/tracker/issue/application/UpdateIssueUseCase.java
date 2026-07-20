@@ -6,12 +6,17 @@ import com.teuprojecto.tracker.shared.domain.IssuePriority;
 import com.teuprojecto.tracker.shared.domain.IssueStatus;
 import com.teuprojecto.tracker.shared.exception.IssueNotFoundException;
 import com.teuprojecto.tracker.user.domain.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.time.Instant;
 import java.util.UUID;
 
 @Component
 public class UpdateIssueUseCase {
+
+    private static final Logger log = LoggerFactory.getLogger(UpdateIssueUseCase.class);
 
     private final IssueRepository issueRepository;
     private final UserRepository userRepository;
@@ -31,7 +36,13 @@ public class UpdateIssueUseCase {
     public Issue overridePriority(UUID id, IssuePriority priority) {
         var issue = issueRepository.findById(id)
                 .orElseThrow(() -> new IssueNotFoundException(id));
+        var previousPriority = issue.getPriority();
+        // TODO(Fase 2): obter o responsável (ADMIN) a partir do SecurityContext assim que estiver operacional
+        var responsible = "UNKNOWN";
         issue.setPriority(priority, null);
+        // RN-03: toda sobreposição manual de prioridade deve ser registada em log com timestamp e responsável
+        log.info("AUDIT priority_override issueId={} from={} to={} responsible={} at={}",
+                id, previousPriority, priority, responsible, Instant.now());
         return issueRepository.save(issue);
     }
 
