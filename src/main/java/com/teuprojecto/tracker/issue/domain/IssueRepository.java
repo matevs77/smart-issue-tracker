@@ -12,5 +12,7 @@ public interface IssueRepository {
 
     Optional<Issue> findById(UUID id);
 
+    void deleteById(UUID id);
+
     Page<Issue> findAll(IssueFilter filter, Pageable pageable);
 }

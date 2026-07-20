@@ -1,5 +1,6 @@
 package com.teuprojecto.tracker.notification.presentation.dto;
 
+import com.teuprojecto.tracker.notification.domain.Notification;
 import com.teuprojecto.tracker.shared.domain.NotificationStatus;
 import com.teuprojecto.tracker.shared.domain.NotificationType;
 
@@ -13,4 +14,14 @@ public record NotificationResponse(
     NotificationStatus status,
     Instant createdAt
 ) {
+
+    public static NotificationResponse from(Notification notification) {
+        return new NotificationResponse(
+            notification.getId(),
+            notification.getType(),
+            notification.getMessage(),
+            notification.getStatus(),
+            notification.getCreatedAt()
+        );
+    }
 }

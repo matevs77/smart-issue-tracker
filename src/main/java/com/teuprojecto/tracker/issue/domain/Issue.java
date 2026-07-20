@@ -14,7 +14,7 @@ import com.teuprojecto.tracker.user.domain.User;
 public class Issue {
 
     private final UUID id;
-    private final String title;
+    private String title;
     private String description;
     private IssueStatus status;
     private IssuePriority priority;
@@ -82,6 +82,12 @@ public class Issue {
 
     public void addComment(Comment comment) {
         this.comments.add(comment);
+        this.updatedAt = Instant.now();
+    }
+
+    public void updateDetails(String title, String description) {
+        this.title = title;
+        this.description = description;
         this.updatedAt = Instant.now();
     }
 

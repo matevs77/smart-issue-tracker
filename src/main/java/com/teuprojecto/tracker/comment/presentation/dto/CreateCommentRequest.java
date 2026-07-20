@@ -1,9 +1,11 @@
 package com.teuprojecto.tracker.comment.presentation.dto;
 
-public class CreateCommentRequest {
+import jakarta.validation.constraints.NotBlank;
 
-    private String content;
+import java.util.UUID;
 
-    public String getContent() { return content; }
-    public void setContent(String content) { this.content = content; }
-}
+public record CreateCommentRequest(
+    @NotBlank String content,
+    // TODO(Fase 2): remover e extrair do SecurityContext após JWT
+    UUID authorId
+) {}

@@ -3,7 +3,6 @@ package com.teuprojecto.tracker.issue.infrastructure.persistence;
 import com.teuprojecto.tracker.issue.domain.Issue;
 import com.teuprojecto.tracker.issue.domain.IssueFilter;
 import com.teuprojecto.tracker.issue.domain.IssueRepository;
-import com.teuprojecto.tracker.user.domain.User;
 import com.teuprojecto.tracker.user.infrastructure.persistence.UserJpaRepository;
 import com.teuprojecto.tracker.user.infrastructure.persistence.UserMapper;
 import jakarta.persistence.criteria.Predicate;
@@ -43,6 +42,11 @@ public class IssueRepositoryAdapter implements IssueRepository {
     @Override
     public Optional<Issue> findById(UUID id) {
         return jpaRepository.findById(id).map(this::toDomainWithAssociations);
+    }
+
+    @Override
+    public void deleteById(UUID id) {
+        jpaRepository.deleteById(id);
     }
 
     @Override

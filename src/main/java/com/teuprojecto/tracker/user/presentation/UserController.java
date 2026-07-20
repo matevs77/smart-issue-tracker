@@ -1,7 +1,6 @@
 package com.teuprojecto.tracker.user.presentation;
 
 import com.teuprojecto.tracker.user.application.CreateUserUseCase;
-import com.teuprojecto.tracker.user.domain.User;
 import com.teuprojecto.tracker.user.presentation.dto.CreateUserRequest;
 import com.teuprojecto.tracker.user.presentation.dto.UserResponse;
 import jakarta.validation.Valid;
@@ -26,13 +25,14 @@ public class UserController {
     public ResponseEntity<UserResponse> create(@Valid @RequestBody CreateUserRequest request) {
         var user = createUserUseCase.execute(request);
 
-        var response = new UserResponse();
-        response.setId(user.getId());
-        response.setUsername(user.getUsername());
-        response.setEmail(user.getEmail());
-        response.setRole(user.getRole().name());
-        response.setActive(user.isActive());
-        response.setCreatedAt(user.getCreatedAt());
+        var response = new UserResponse(
+            user.getId(),
+            user.getUsername(),
+            user.getEmail(),
+            user.getRole().name(),
+            user.isActive(),
+            user.getCreatedAt()
+        );
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }

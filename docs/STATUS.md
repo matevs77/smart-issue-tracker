@@ -1,7 +1,8 @@
 ---
 status: em revisão
-última-atualização: 2026-07-18
+última-atualização: 2026-07-20
 responsável: matevz77
+
 ---
 
 # STATUS — Estado Atual de Implementação
@@ -21,52 +22,60 @@ responsável: matevz77
 
 | Item | Status | Notas |
 |------|--------|-------|
-| Issue domain entity | ✅ | Implementado (Issue.java, 99 linhas, regras de negócio); construtor defende `comments=null` (corrigido NPE em toDomain, ver Nota de Scaffolding) |
+| Issue domain entity | ✅ | Implementado (Issue.java, 99 linhas, regras de negócio); testado unitariamente (IssueTest, Prompt E); construtor defende `comments=null` (corrigido NPE em toDomain, ver Nota de Scaffolding) |
 | IssueJpaEntity | ✅ | Implementado (68 linhas, entidade JPA completa com índices e CHECK) |
 | IssueMapper | ✅ | Implementado (MapStruct, 18 linhas) |
 | IssueFilter | ⚡ | Implementado (record com status/priority/reporterId/assigneeId opcionais) |
 | IssueStatus enum (shared) | ⚡ | Implementado (shared/domain/IssueStatus.java) |
 | IssuePriority enum (shared) | ⚡ | Implementado (shared/domain/IssuePriority.java) |
-| IssueRepository interface | ⚡ | Implementado (save, findById, findAll com filtro + paginação) |
-| IssueRepositoryAdapter | ⚡ | Implementado (especificações JPA + carregamento de User via UserJpaRepository) |
-| CreateIssueUseCase | ⚡ | Implementado (cria Issue, carrega reporter/assignee, persiste) |
-| UpdateIssueUseCase | 📋 | Pendente (depende de JWT da Fase 2 para validação de Role); ficheiro vazio (0 linhas) |
+| IssueRepository interface | ⚡ | Implementado (save, findById, deleteById, findAll com filtro + paginação) |
+| IssueRepositoryAdapter | ⚡ | Implementado (especificações JPA + carregamento de User via UserJpaRepository + deleteById) |
+| CreateIssueUseCase | ✅ | Implementado (cria Issue, carrega reporter/assignee, persiste); testado unitariamente (CreateIssueUseCaseTest, Prompt E) |
+| UpdateIssueUseCase | ⚡ | Implementado (changeStatus, overridePriority, reassign, updateDetails); autorização de Role pendente da Fase 2 (ver Nota de Scaffolding) |
+| DeleteIssueUseCase | ⚡ | Implementado (remove issue em cascata); autorização de Role pendente da Fase 2 (ver Nota de Scaffolding) |
 | IssueClassificationService | 📋 | Ficheiro vazio (0 linhas) |
 | IssueJpaRepository | ✅ | Implementado (extends JpaRepository) |
 | IssueEventPublisher | 📋 | Ficheiro não existe (events/ por criar) |
 | IssueEventConsumer | 📋 | Ficheiro não existe (events/ por criar) |
 | SpringAiClassifier | 📋 | Ficheiro vazio (0 linhas) |
-| IssueController | ⚡ | Implementado (POST /, GET /{id}, GET / com filtros e paginação); PATCH/DELETE ainda por implementar (Fase 2) |
+| IssueController | ⚡ | Implementado (POST /, GET /{id}, GET / com filtros e paginação; PATCH /{id}/status, /priority, /assignee, /details e DELETE /{id}); autorização de Role pendente da Fase 2 (ver Nota de Scaffolding) |
 | CreateIssueRequest DTO | ⚡ | Implementado (inclui reporterId temporário — ver Nota de Scaffolding) |
 | IssueResponse DTO | ⚡ | Implementado (record com UserRef e CommentEntry aninhados) |
-| IssueUpdateRequest DTO | 📋 | Ficheiro vazio (0 linhas) |
+| ChangeStatusRequest DTO | ⚡ | Implementado (record, Prompt C) |
+| OverridePriorityRequest DTO | ⚡ | Implementado (record, Prompt C) |
+| ReassignRequest DTO | ⚡ | Implementado (record, Prompt C) |
+| UpdateDetailsRequest DTO | ⚡ | Implementado (record, Prompt C) |
 
 ## Módulo: Comment
 
 | Item | Status | Notas |
 |------|--------|-------|
-| Comment domain | ⚡ | Implementado (Comment.java, 43 linhas, regras de negócio) |
-| Comment application | 📋 | CreateCommentUseCase criado (Prompt C) |
-| Comment infrastructure | ⚡ | JPA entity e mapper implementados; JpaRepository criado (Prompt C) |
-| Comment presentation | 📋 | Controller criado (Prompt C) |
+| Comment domain | ✅ | Implementado (Comment.java, 43 linhas, regras de negócio; RN-06 validada em `create`); testado unitariamente (CommentTest, Prompt E) |
+| Comment application | ⚡ | CreateCommentUseCase implementado (Prompt D): carrega Issue+Author, valida RN-06, persiste e cria Notification síncrona (RF-08) |
+| Comment infrastructure | ⚡ | JPA entity, mapper e JpaRepository implementados; CommentRepository (domínio) com save/findByIssueId; CommentRepositoryAdapter implementado (reidrata issue+author) |
+| Comment presentation | ⚡ | CommentController implementado (POST /api/v1/issues/{issueId}/comments → 201; GET → lista paginada); CreateCommentRequest com authorId temporário (ver Nota de Scaffolding); CommentResponse.from adicionado |
+| RF-07 (criar comentário) | ⚡ | Implementado via CreateCommentUseCase + CommentController |
+| RF-15 (listar comentários) | ⚡ | Implementado via GET /api/v1/issues/{issueId}/comments |
 
 ## Módulo: Notification
 
 | Item | Status | Notas |
 |------|--------|-------|
-| Notification domain | ⚡ | Implementado (Notification.java, 60 linhas, regras de negócio) |
-| Notification application | 📋 | NotificationService criado (Prompt C) |
-| Notification infrastructure | ⚡ | JPA entity e mapper implementados; JpaRepository criado (Prompt C) |
+| Notification domain | ✅ | Implementado (Notification.java, 60 linhas, regras de negócio; markAsSent/markAsFailed); testado unitariamente (NotificationTest, Prompt E) |
+| Notification application | ⚡ | NotificationService implementado (Prompt D): listForUser(UUID, Pageable) |
+| Notification infrastructure | ⚡ | JPA entity, mapper e JpaRepository implementados; NotificationRepository (domínio) com save/findByRecipientId; NotificationRepositoryAdapter implementado (reidrata recipient) |
 | NotificationProducer | 📋 | Ficheiro vazio (0 linhas) |
 | NotificationConsumer | 📋 | Ficheiro vazio (0 linhas) |
-| NotificationResponse DTO | 📋 | Criado como record (Prompt C) |
+| NotificationResponse DTO | ⚡ | record com factory `from(Notification)` (Prompt D) |
+| RF-08 (notificar autor de issue) | ⚡ | Implementado de forma síncrona (persistência direta da Notification em CreateCommentUseCase); substituir por RabbitMQ na Fase 5 (ver Nota de Scaffolding) |
+| RF-20 (listar notificações) | ⚡ | Implementado via GET /api/v1/notifications?recipientId= (recipientId por query param, ver Nota de Scaffolding) |
 
 ## Módulo: User
 
 | Item | Status | Notas |
 |------|--------|-------|
 | User domain | ⚡ | Implementado (User.java, 47 linhas); UserRepository alargado (save, findById, existsByUsername, existsByEmail); DuplicateUserException criada |
-| User application | ⚡ | CreateUserUseCase implementado (valida duplicados, hash BCrypt, persiste) |
+| User application | ✅ | CreateUserUseCase implementado (valida duplicados, hash BCrypt, persiste); testado unitariamente (CreateUserUseCaseTest, Prompt E) |
 | User infrastructure | ⚡ | JPA entity, mapper e JpaRepository implementados; UserRepositoryAdapter implementado (save/existBy*) |
 | User presentation | ⚡ | Controller (POST /api/v1/users → 201) e DTOs criados; CreateUserRequest com validação Bean |
 | PasswordEncoderConfig | ⚡ | Implementado (security/PasswordEncoderConfig.java, BCrypt força 10) — distinto de SecurityConfig (Fase 2) |
@@ -98,7 +107,7 @@ responsável: matevz77
 | NotificationType | ⚡ | Implementado (shared/domain/, enum) |
 | Role | ⚡ | Implementado (shared/domain/, enum) |
 | DomainEvent | 📋 | Ficheiro vazio (shared/event/DomainEvent.java) |
-| GlobalExceptionHandler | ⚡ | Implementado (shared/exception/GlobalExceptionHandler.java — RFC 7807: 400/404/409/422/500) |
+| GlobalExceptionHandler | ✅ | Implementado (shared/exception/GlobalExceptionHandler.java — RFC 7807: 400/404/409/422/500); testado unitariamente (GlobalExceptionHandlerTest, Prompt E) |
 | IssueNotFoundException | ⚡ | Implementado (shared/exception/IssueNotFoundException.java — mapeada para 404) |
 | Util classes | 📋 | Pasta vazia |
 
@@ -123,8 +132,12 @@ responsável: matevz77
 | Nota | Descrição |
 |------|-----------|
 | reporterId em CreateIssueRequest | Incluído temporariamente como campo obrigatório porque o JWT (Fase 2) ainda não está implementado. `// TODO(Fase 2): remover e extrair do SecurityContext após JWT`. Eliminar quando o SecurityContext estiver operacional. |
+| authorId em CreateCommentRequest | Incluído temporariamente como campo obrigatório porque o JWT (Fase 2) ainda não está implementado. `// TODO(Fase 2): remover e extrair do SecurityContext após JWT`. Eliminar quando o SecurityContext estiver operacional. |
+| Notificação síncrona em CreateCommentUseCase (RF-08) | RF-08 implementada com persistência direta da Notification (sem RabbitMQ) porque o consumidor assíncrono pertence à Fase 5. `// TODO(Fase 5): substituir persistência direta por publicação RabbitMQ + NotificationConsumer`. |
+| recipientId por query param em NotificationController (RF-20) | `GET /api/v1/notifications` extrai `recipientId` como query param porque o JWT (Fase 2) ainda não está implementado. `// TODO(Fase 2): extrair recipientId do SecurityContext (JWT) em vez de query param`. |
 | Autorização ADMIN em POST /api/v1/users | RF-13 exige que a criação de utilizadores seja restrita a ADMIN, mas a validação de Role só é possível após a Fase 2 (JWT/SecurityContext). O endpoint está temporariamente sem autenticação/autorização. `// TODO(Fase 2): aplicar Role.ADMIN via SecurityConfig/JwtAuthFilter`. |
 | SecurityFilterChain temporário em SecurityConfig | `spring-boot-starter-security` está no classpath; sem SecurityFilterChain definido, o Spring ativaria proteção por omissão. Implementado um `SecurityFilterChain` temporário que desativa CSRF e faz `permitAll()` em todos os pedidos, para permitir testar os endpoints REST da Fase 1. `// TODO(Fase 2): substituir por SecurityFilterChain com JwtAuthFilter e autorização por Role (RN-01, RN-02, RF-04)`. |
+| Autorização de Role em endpoints de Issue (Prompt C) | RF-16 a RF-19 (PATCH /status, /priority, /assignee, /details) e RF-07/RF-20 (DELETE) estão funcionais sem proteção de Role. A autorização por Role (RN-01, RN-02) só é possível após a Fase 2. Cada endpoint tem `// TODO(Fase 2): restringir por Role conforme RN-01/RN-02 quando o SecurityContext estiver operacional`. |
 | Bug corrigido: NPE em Issue (POST /issues 500) | `Issue.<init>` fazia `new ArrayList<>(comments)`; ao reconstruir o domínio a partir da JPA entity (MapStruct `toDomain` ignora `comments` e passa `null`), lançava `NullPointerException` → 500. Corrigido com guarda nula no construtor de `Issue.java`. |
 | Bug corrigido: 404/405 engulfados como 500 | `GlobalExceptionHandler` capturava `NoResourceFoundException` e `HttpRequestMethodNotSupportedException` no handler genérico, devolvendo 500. Adicionados handlers dedicados: 404 NOT_FOUND e 405 METHOD_NOT_ALLOWED (RFC 7807). |
 

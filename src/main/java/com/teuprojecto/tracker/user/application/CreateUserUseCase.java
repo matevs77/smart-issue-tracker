@@ -20,17 +20,17 @@ public class CreateUserUseCase {
     }
 
     public User execute(CreateUserRequest request) {
-        if (userRepository.existsByUsername(request.getUsername())) {
-            throw new DuplicateUserException("Username already exists: " + request.getUsername());
+        if (userRepository.existsByUsername(request.username())) {
+            throw new DuplicateUserException("Username already exists: " + request.username());
         }
-        if (userRepository.existsByEmail(request.getEmail())) {
-            throw new DuplicateUserException("Email already exists: " + request.getEmail());
+        if (userRepository.existsByEmail(request.email())) {
+            throw new DuplicateUserException("Email already exists: " + request.email());
         }
 
-        var role = Role.valueOf(request.getRole());
-        var passwordHash = passwordEncoder.encode(request.getPassword());
+        var role = Role.valueOf(request.role());
+        var passwordHash = passwordEncoder.encode(request.password());
 
-        var user = User.create(request.getUsername(), request.getEmail(), passwordHash, role);
+        var user = User.create(request.username(), request.email(), passwordHash, role);
 
         return userRepository.save(user);
     }

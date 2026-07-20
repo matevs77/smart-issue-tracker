@@ -25,6 +25,8 @@
         <logstash-encoder.version>8.0</logstash-encoder.version>
         <maven-compiler-plugin.version>3.15.0</maven-compiler-plugin.version>
         <lombok.version>1.18.46</lombok.version>
+        <byte-buddy.version>1.17.5</byte-buddy.version>
+        <objenesis.version>3.3</objenesis.version>
     </properties>
 
     <dependencyManagement>
