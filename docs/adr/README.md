@@ -1,6 +1,6 @@
 ---
 status: estável
-última-atualização: 2026-07-09
+última-atualização: 2026-07-22
 responsável: matevz77
 ---
 
@@ -26,6 +26,7 @@ Um ADR é um documento conciso que regista:
 | 04 | [Virtual Threads para concorrência](adr-04-virtual-threads.md) | Proposto |
 | 05 | [Fallback na classificação por IA](adr-05-spring-ai-fallback.md) | Proposto |
 | 06 | [Observabilidade desde o início](adr-06-observability-first.md) | Proposto |
+| 07 | [Bootstrap de acesso e claims JWT](adr-07-jwt-bootstrap-e-claims.md) | Aceite |
 
 ## Como propor um novo ADR
 

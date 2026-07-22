@@ -37,12 +37,12 @@ class CreateIssueUseCaseTest {
     void executeHappyPathCreatesIssue() {
         var reporterId = UUID.randomUUID();
         var reporter = User.create("reporter", "reporter@example.com", "hash", Role.DEVELOPER);
-        var request = new CreateIssueRequest("title", "description", null, reporterId);
+        var request = new CreateIssueRequest("title", "description", null);
 
         when(userRepository.findById(reporterId)).thenReturn(Optional.of(reporter));
         when(issueRepository.save(any(Issue.class))).thenAnswer(inv -> inv.getArgument(0));
 
-        var issue = createIssueUseCase.execute(request);
+        var issue = createIssueUseCase.execute(request, reporterId);
 
         assertThat(issue.getTitle()).isEqualTo("title");
         assertThat(issue.getReporter()).isEqualTo(reporter);
@@ -52,11 +52,11 @@ class CreateIssueUseCaseTest {
     @Test
     void executeWithUnknownReporterThrowsIllegalArgumentException() {
         var reporterId = UUID.randomUUID();
-        var request = new CreateIssueRequest("title", "description", null, reporterId);
+        var request = new CreateIssueRequest("title", "description", null);
 
         when(userRepository.findById(reporterId)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> createIssueUseCase.execute(request))
+        assertThatThrownBy(() -> createIssueUseCase.execute(request, reporterId))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }

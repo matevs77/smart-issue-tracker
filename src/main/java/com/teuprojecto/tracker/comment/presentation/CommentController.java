@@ -4,11 +4,14 @@ import com.teuprojecto.tracker.comment.application.CreateCommentUseCase;
 import com.teuprojecto.tracker.comment.domain.CommentRepository;
 import com.teuprojecto.tracker.comment.presentation.dto.CommentResponse;
 import com.teuprojecto.tracker.comment.presentation.dto.CreateCommentRequest;
+import com.teuprojecto.tracker.security.AuthenticatedPrincipal;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,9 +34,11 @@ public class CommentController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'DEVELOPER')")
     public ResponseEntity<CommentResponse> create(@PathVariable UUID issueId,
-                                                  @Valid @RequestBody CreateCommentRequest request) {
-        var comment = createCommentUseCase.execute(issueId, request, request.authorId());
+                                                  @Valid @RequestBody CreateCommentRequest request,
+                                                  @AuthenticationPrincipal AuthenticatedPrincipal principal) {
+        var comment = createCommentUseCase.execute(issueId, request, principal.id());
         return ResponseEntity.status(HttpStatus.CREATED).body(CommentResponse.from(comment));
     }
 

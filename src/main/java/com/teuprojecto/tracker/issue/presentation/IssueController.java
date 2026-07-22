@@ -13,12 +13,15 @@ import com.teuprojecto.tracker.issue.presentation.dto.ReassignRequest;
 import com.teuprojecto.tracker.issue.presentation.dto.UpdateDetailsRequest;
 import com.teuprojecto.tracker.shared.domain.IssuePriority;
 import com.teuprojecto.tracker.shared.domain.IssueStatus;
+import com.teuprojecto.tracker.security.AuthenticatedPrincipal;
 import com.teuprojecto.tracker.shared.exception.IssueNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -49,8 +52,10 @@ public class IssueController {
     }
 
     @PostMapping
-    public ResponseEntity<IssueResponse> create(@Valid @RequestBody CreateIssueRequest request) {
-        var issue = createIssueUseCase.execute(request);
+    @PreAuthorize("hasAnyRole('ADMIN', 'DEVELOPER')")
+    public ResponseEntity<IssueResponse> create(@Valid @RequestBody CreateIssueRequest request,
+                                                @AuthenticationPrincipal AuthenticatedPrincipal principal) {
+        var issue = createIssueUseCase.execute(request, principal.id());
         return ResponseEntity.status(HttpStatus.CREATED).body(IssueResponse.from(issue));
     }
 
@@ -75,35 +80,36 @@ public class IssueController {
     }
 
     @PatchMapping("/{id}/status")
-    // TODO(Fase 2): restringir por Role conforme RN-01/RN-02 quando o SecurityContext estiver operacional
+    @PreAuthorize("hasAnyRole('ADMIN', 'DEVELOPER')")
     public ResponseEntity<IssueResponse> changeStatus(@PathVariable UUID id, @Valid @RequestBody ChangeStatusRequest request) {
         var issue = updateIssueUseCase.changeStatus(id, request.status());
         return ResponseEntity.ok(IssueResponse.from(issue));
     }
 
     @PatchMapping("/{id}/priority")
-    // TODO(Fase 2): restringir por Role conforme RN-01/RN-02 quando o SecurityContext estiver operacional
-    public ResponseEntity<IssueResponse> overridePriority(@PathVariable UUID id, @Valid @RequestBody OverridePriorityRequest request) {
-        var issue = updateIssueUseCase.overridePriority(id, request.priority());
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<IssueResponse> overridePriority(@PathVariable UUID id, @Valid @RequestBody OverridePriorityRequest request,
+                                                          @AuthenticationPrincipal AuthenticatedPrincipal principal) {
+        var issue = updateIssueUseCase.overridePriority(id, request.priority(), principal.username());
         return ResponseEntity.ok(IssueResponse.from(issue));
     }
 
     @PatchMapping("/{id}/assignee")
-    // TODO(Fase 2): restringir por Role conforme RN-01/RN-02 quando o SecurityContext estiver operacional
+    @PreAuthorize("hasAnyRole('ADMIN', 'DEVELOPER')")
     public ResponseEntity<IssueResponse> reassign(@PathVariable UUID id, @Valid @RequestBody ReassignRequest request) {
         var issue = updateIssueUseCase.reassign(id, request.assigneeId());
         return ResponseEntity.ok(IssueResponse.from(issue));
     }
 
     @PatchMapping("/{id}/details")
-    // TODO(Fase 2): restringir por Role conforme RN-01/RN-02 quando o SecurityContext estiver operacional
+    @PreAuthorize("hasAnyRole('ADMIN', 'DEVELOPER')")
     public ResponseEntity<IssueResponse> updateDetails(@PathVariable UUID id, @Valid @RequestBody UpdateDetailsRequest request) {
         var issue = updateIssueUseCase.updateDetails(id, request.title(), request.description());
         return ResponseEntity.ok(IssueResponse.from(issue));
     }
 
     @DeleteMapping("/{id}")
-    // TODO(Fase 2): restringir por Role conforme RN-01/RN-02 quando o SecurityContext estiver operacional
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
         deleteIssueUseCase.execute(id);
         return ResponseEntity.noContent().build();

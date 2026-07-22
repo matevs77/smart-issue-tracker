@@ -1,6 +1,6 @@
 ---
 status: estável
-última-atualização: 2026-07-09
+última-atualização: 2026-07-22
 responsável: matevz77
 ---
 
@@ -135,3 +135,27 @@ Logs estruturados (formato JSON) em produção para integração com ferramentas
 | 3 | Corrigir manualmente o SQL da migração com falha |
 | 4 | Executar `mvn flyway:repair` para marcar a migração como falhada |
 | 5 | Reaplicar migrações pendentes |
+
+## 3. Bootstrap de Acesso
+
+O primeiro utilizador `ADMIN` é criado automaticamente pela migração Flyway
+`V5__seed_default_admin_user.sql`, com username `admin` e a password
+definida através da variável de ambiente `ADMIN_BOOTSTRAP_PASSWORD_HASH`.
+
+| Configuração | Valor |
+|---|---|
+| Username | `admin` |
+| Password (dev) | `ChangeMe123!` |
+| Variável de ambiente | `ADMIN_BOOTSTRAP_PASSWORD_HASH` (hash BCrypt da password pretendida) |
+| Valor por omissão (dev) | Hash BCrypt de `ChangeMe123!`, definido em `application.yml` |
+
+**Aviso:** O valor por omissão em `application.yml` é apenas para
+desenvolvimento local. Qualquer ambiente exposto fora da máquina do
+programador **deve** definir `ADMIN_BOOTSTRAP_PASSWORD_HASH` com um hash
+BCrypt de uma password segura antes do primeiro arranque, seguindo o mesmo
+princípio já documentado para `JWT_SECRET`.
+
+**Limitação conhecida:** Não existe atualmente um endpoint `PATCH` para
+alterar a password do utilizador `admin` após o arranque. A rotação da
+password de bootstrap pós-arranque deverá ser considerada numa fase
+futura, fora do âmbito da Fase 2 (Segurança).

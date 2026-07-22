@@ -1,6 +1,6 @@
 ---
 status: em revisão
-última-atualização: 2026-07-20
+última-atualização: 2026-07-22
 responsável: matevz77
 
 ---
@@ -38,8 +38,8 @@ responsável: matevz77
 | IssueEventPublisher | 📋 | Ficheiro não existe (events/ por criar) |
 | IssueEventConsumer | 📋 | Ficheiro não existe (events/ por criar) |
 | SpringAiClassifier | 📋 | Ficheiro vazio (0 linhas) |
-| IssueController | ⚡ | Implementado (POST /, GET /{id}, GET / com filtros e paginação; PATCH /{id}/status, /priority, /assignee, /details e DELETE /{id}); autorização de Role pendente da Fase 2 (ver Nota de Scaffolding) |
-| CreateIssueRequest DTO | ⚡ | Implementado (inclui reporterId temporário — ver Nota de Scaffolding) |
+| IssueController | ✅ | Implementado (POST /, GET /{id}, GET / com filtros e paginação; PATCH /{id}/status, /priority, /assignee, /details e DELETE /{id}); autorização por `@PreAuthorize` concluída na Fase 2 |
+| CreateIssueRequest DTO | ✅ | Implementado (sem reporterId — extraído do SecurityContext via @AuthenticationPrincipal; Fase 2) |
 | IssueResponse DTO | ⚡ | Implementado (record com UserRef e CommentEntry aninhados) |
 | ChangeStatusRequest DTO | ⚡ | Implementado (record, Prompt C) |
 | OverridePriorityRequest DTO | ⚡ | Implementado (record, Prompt C) |
@@ -53,7 +53,7 @@ responsável: matevz77
 | Comment domain | ✅ | Implementado (Comment.java, 43 linhas, regras de negócio; RN-06 validada em `create`); testado unitariamente (CommentTest, Prompt E) |
 | Comment application | ⚡ | CreateCommentUseCase implementado (Prompt D): carrega Issue+Author, valida RN-06, persiste e cria Notification síncrona (RF-08) |
 | Comment infrastructure | ⚡ | JPA entity, mapper e JpaRepository implementados; CommentRepository (domínio) com save/findByIssueId; CommentRepositoryAdapter implementado (reidrata issue+author) |
-| Comment presentation | ⚡ | CommentController implementado (POST /api/v1/issues/{issueId}/comments → 201; GET → lista paginada); CreateCommentRequest com authorId temporário (ver Nota de Scaffolding); CommentResponse.from adicionado |
+| Comment presentation | ✅ | CommentController implementado (POST /api/v1/issues/{issueId}/comments → 201; GET → lista paginada); CreateCommentRequest sem authorId (extraído do SecurityContext via @AuthenticationPrincipal; Fase 2) |
 | RF-07 (criar comentário) | ⚡ | Implementado via CreateCommentUseCase + CommentController |
 | RF-15 (listar comentários) | ⚡ | Implementado via GET /api/v1/issues/{issueId}/comments |
 
@@ -68,7 +68,7 @@ responsável: matevz77
 | NotificationConsumer | 📋 | Ficheiro vazio (0 linhas) |
 | NotificationResponse DTO | ⚡ | record com factory `from(Notification)` (Prompt D) |
 | RF-08 (notificar autor de issue) | ⚡ | Implementado de forma síncrona (persistência direta da Notification em CreateCommentUseCase); substituir por RabbitMQ na Fase 5 (ver Nota de Scaffolding) |
-| RF-20 (listar notificações) | ⚡ | Implementado via GET /api/v1/notifications?recipientId= (recipientId por query param, ver Nota de Scaffolding) |
+| RF-20 (listar notificações) | ✅ | Implementado via GET /api/v1/notifications (recipientId extraído do SecurityContext via @AuthenticationPrincipal; Fase 2) |
 
 ## Módulo: User
 
@@ -80,13 +80,23 @@ responsável: matevz77
 | User presentation | ⚡ | Controller (POST /api/v1/users → 201) e DTOs criados; CreateUserRequest com validação Bean |
 | PasswordEncoderConfig | ⚡ | Implementado (security/PasswordEncoderConfig.java, BCrypt força 10) — distinto de SecurityConfig (Fase 2) |
 
-## Segurança
+## Módulo: Segurança
 
 | Item | Status | Notas |
 |------|--------|-------|
-| SecurityConfig | ⚡ | Implementado (SecurityFilterChain temporário: CSRF desativado, permitAll; ver Nota de Scaffolding) |
-| JwtAuthFilter | 📋 | Ficheiro vazio (0 linhas) |
-| JwtService | 📋 | Ficheiro vazio (0 linhas) |
+| SecurityConfig | ✅ | Implementado (SecurityFilterChain com JWT, STATELESS, CORS, `@EnableMethodSecurity`; Fase 2) |
+| JwtAuthFilter | ✅ | Implementado (OncePerRequestFilter: extração e validação de token Bearer, população do SecurityContext; Fase 2); testado unitariamente (JwtAuthFilterTest) |
+| JwtService | ✅ | Implementado (geração e validação de tokens HMAC-SHA256, extração de claims; Fase 2); testado unitariamente (JwtServiceTest) |
+| UserDetailsServiceImpl | ✅ | Implementado (carrega User por username, devolve AuthenticatedUserDetails; Fase 2) |
+| AuthenticatedUserDetails | ✅ | Implementado (UserDetails wrapper com getId(), getRole(); Fase 2) |
+| AuthenticatedPrincipal | ✅ | Implementado (record com id + username; Fase 2) |
+| RestAuthenticationEntryPoint | ✅ | Implementado (resposta 401 RFC 7807 para falhas de autenticação; Fase 2) |
+| AuthController | ✅ | Implementado (POST /api/v1/auth/login; Fase 2) |
+| AuthService | ✅ | Implementado (login com AuthenticationManager + JwtService; Fase 2); testado unitariamente (AuthServiceTest) |
+| V5__seed_default_admin_user.sql | ✅ | Implementado (bootstrap do utilizador ADMIN com hash parametrizado; Fase 2) |
+| InvalidTokenException | ✅ | Implementado (exceção específica para tokens inválidos/expirados; Fase 2) |
+| JwtProperties | ✅ | Implementado (record @ConfigurationProperties para security.jwt; Fase 2) |
+| AuthFlowIntegrationTest | ✅ | Teste de integração (fluxo login -> token -> endpoint protegido com Testcontainers; Fase 2) |
 
 ## Configuração
 
@@ -131,13 +141,7 @@ responsável: matevz77
 
 | Nota | Descrição |
 |------|-----------|
-| reporterId em CreateIssueRequest | Incluído temporariamente como campo obrigatório porque o JWT (Fase 2) ainda não está implementado. `// TODO(Fase 2): remover e extrair do SecurityContext após JWT`. Eliminar quando o SecurityContext estiver operacional. |
-| authorId em CreateCommentRequest | Incluído temporariamente como campo obrigatório porque o JWT (Fase 2) ainda não está implementado. `// TODO(Fase 2): remover e extrair do SecurityContext após JWT`. Eliminar quando o SecurityContext estiver operacional. |
 | Notificação síncrona em CreateCommentUseCase (RF-08) | RF-08 implementada com persistência direta da Notification (sem RabbitMQ) porque o consumidor assíncrono pertence à Fase 5. `// TODO(Fase 5): substituir persistência direta por publicação RabbitMQ + NotificationConsumer`. |
-| recipientId por query param em NotificationController (RF-20) | `GET /api/v1/notifications` extrai `recipientId` como query param porque o JWT (Fase 2) ainda não está implementado. `// TODO(Fase 2): extrair recipientId do SecurityContext (JWT) em vez de query param`. |
-| Autorização ADMIN em POST /api/v1/users | RF-13 exige que a criação de utilizadores seja restrita a ADMIN, mas a validação de Role só é possível após a Fase 2 (JWT/SecurityContext). O endpoint está temporariamente sem autenticação/autorização. `// TODO(Fase 2): aplicar Role.ADMIN via SecurityConfig/JwtAuthFilter`. |
-| SecurityFilterChain temporário em SecurityConfig | `spring-boot-starter-security` está no classpath; sem SecurityFilterChain definido, o Spring ativaria proteção por omissão. Implementado um `SecurityFilterChain` temporário que desativa CSRF e faz `permitAll()` em todos os pedidos, para permitir testar os endpoints REST da Fase 1. `// TODO(Fase 2): substituir por SecurityFilterChain com JwtAuthFilter e autorização por Role (RN-01, RN-02, RF-04)`. |
-| Autorização de Role em endpoints de Issue (Prompt C) | RF-16 a RF-19 (PATCH /status, /priority, /assignee, /details) e RF-07/RF-20 (DELETE) estão funcionais sem proteção de Role. A autorização por Role (RN-01, RN-02) só é possível após a Fase 2. Cada endpoint tem `// TODO(Fase 2): restringir por Role conforme RN-01/RN-02 quando o SecurityContext estiver operacional`. |
 | Bug corrigido: NPE em Issue (POST /issues 500) | `Issue.<init>` fazia `new ArrayList<>(comments)`; ao reconstruir o domínio a partir da JPA entity (MapStruct `toDomain` ignora `comments` e passa `null`), lançava `NullPointerException` → 500. Corrigido com guarda nula no construtor de `Issue.java`. |
 | Bug corrigido: 404/405 engulfados como 500 | `GlobalExceptionHandler` capturava `NoResourceFoundException` e `HttpRequestMethodNotSupportedException` no handler genérico, devolvendo 500. Adicionados handlers dedicados: 404 NOT_FOUND e 405 METHOD_NOT_ALLOWED (RFC 7807). |
 
@@ -146,4 +150,4 @@ responsável: matevz77
 | Item | Status | Notas |
 |------|--------|-------|
 | docs/ | ✅ | Estrutura completa criada |
-| ADR | 🔧 | Decisões a registar |
+| ADR | ✅ | ADR-01 a ADR-06 propostos; ADR-07 (JWT bootstrap e claims) aceite |

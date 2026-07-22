@@ -1,6 +1,6 @@
 ---
 status: estável
-última-atualização: 2026-07-13
+última-atualização: 2026-07-22
 responsável: matevz77
 ---
 
@@ -66,14 +66,19 @@ sequenceDiagram
 
 ## 5. Autorização por Role
 
-| Endpoint | ADMIN | DEVELOPER | VIEWER |
-|----------|-------|-----------|--------|
-| GET /api/v1/issues | ✅ | ✅ | ✅ |
-| POST /api/v1/issues | ✅ | ✅ | ❌ |
-| PATCH /api/v1/issues/{id}/status | ✅ | ✅ | ❌ |
-| PATCH /api/v1/issues/{id}/priority | ✅ | ❌ | ❌ |
-| POST /api/v1/issues/{id}/comments | ✅ | ✅ | ❌ |
-| GET /api/v1/issues/{id}/comments | ✅ | ✅ | ✅ |
+| Endpoint | ADMIN | DEVELOPER | VIEWER | Origem |
+|---|---|---|---|---|
+| `GET /api/v1/issues`, `GET /{id}` | ✅ | ✅ | ✅ | RN-07 |
+| `POST /api/v1/issues` | ✅ | ✅ | ❌ | `07-security.md` |
+| `PATCH /{id}/status` | ✅ | ✅ | ❌ | RN-01 |
+| `PATCH /{id}/priority` | ✅ | ❌ | ❌ | RN-02 |
+| `PATCH /{id}/assignee` | ✅ | ✅ | ❌ | RF-16 |
+| `PATCH /{id}/details` | ✅ | ✅ | ❌ | RF-19 |
+| `DELETE /{id}` | ✅ | ❌ | ❌ | `06-api-contract.md`, 3.7 |
+| `POST /{issueId}/comments` | ✅ | ✅ | ❌ | `07-security.md` |
+| `GET /{issueId}/comments` | ✅ | ✅ | ✅ | `07-security.md` |
+| `GET /api/v1/notifications` | ✅ | ✅ | ✅ | qualquer utilizador autenticado, apenas as suas próprias |
+| `POST /api/v1/users` | ✅ | ❌ | ❌ | RN-08 |
 
 ## 6. CORS
 
@@ -109,4 +114,4 @@ Para um mecanismo de revogação servidor (Fase 2), ver `docs/01-requirements.md
 - [ ] Rate limiting (pendente)
 - [ ] Content Security Policy headers (pendente)
 - [x] Validação de input com Bean Validation (@NotBlank, @Size, etc.) — ver RNF-07 em `docs/01-requirements.md` secção 4
-- [ ] Segredo JWT externo (via variável de ambiente `JWT_SECRET`), nunca no código-fonte
+- [x] Segredo JWT externo (via variável de ambiente `JWT_SECRET`), nunca no código-fonte

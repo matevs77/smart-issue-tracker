@@ -1,6 +1,6 @@
 ---
 status: estável
-última-atualização: 2026-07-19
+última-atualização: 2026-07-22
 responsável: matevz77
 ---
 
@@ -54,6 +54,7 @@ spring:
 | V2 | Criar tabela tb_issues | V1 (FK para tb_users) |
 | V3 | Criar tabela tb_comments | V2 (FK para tb_issues, ON DELETE CASCADE), V1 (FK para tb_users) |
 | V4 | Criar tabela tb_notifications | V1 (FK para tb_users) |
+| V5 | Seed do utilizador ADMIN inicial, com hash parametrizado (bootstrap RN-08) | V1 |
 | V6 | (Futuro) Criar tabela de auditoria de prioridade | V2 |
 | V7 | (Futuro) Adicionar coluna de refresh_token | V1 |
 

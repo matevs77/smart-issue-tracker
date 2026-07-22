@@ -8,6 +8,13 @@ spring:
     enabled: true
     baseline-on-migrate: true
     baseline-version: 0
+    placeholders:
+      admin-password-hash: ${ADMIN_BOOTSTRAP_PASSWORD_HASH:$2b$10$EX0/eIBKN7WrlNZdwG/g7eHjqlD/0NWnev0ivfq4D1sGmiADgcgNe}
 
 server:
   port: 8080
+
+security:
+  jwt:
+    secret: ${JWT_SECRET:de2b72a8e9c4f61d3a5b8c0d9e7f4a2b6c8d0e1f3a5b7c9d1e3f5a7b9c0d2e4}
+    expiration-minutes: ${JWT_EXPIRATION_MINUTES:60}

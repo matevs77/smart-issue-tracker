@@ -7,6 +7,8 @@ import com.teuprojecto.tracker.user.domain.User;
 import com.teuprojecto.tracker.user.domain.UserRepository;
 import org.springframework.stereotype.Component;
 
+import java.util.UUID;
+
 @Component
 public class CreateIssueUseCase {
 
@@ -18,8 +20,8 @@ public class CreateIssueUseCase {
         this.userRepository = userRepository;
     }
 
-    public Issue execute(CreateIssueRequest request) {
-        var reporter = userRepository.findById(request.reporterId())
+    public Issue execute(CreateIssueRequest request, UUID reporterId) {
+        var reporter = userRepository.findById(reporterId)
                 .orElseThrow(() -> new IllegalArgumentException("Reporter not found"));
 
         User assignee = null;
