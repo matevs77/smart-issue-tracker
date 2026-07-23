@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -86,5 +88,24 @@ class GlobalExceptionHandlerTest {
 
         assertThat(problem.getStatus()).isEqualTo(500);
         assertThat(problem.getType()).isEqualTo(URI.create("https://api.issuetracker.dev/errors/internal-error"));
+    }
+
+    @Test
+    void handleBadCredentialsReturns401() {
+        var ex = new BadCredentialsException("bad credentials");
+        var problem = handler.handleBadCredentials(ex, request());
+
+        assertThat(problem.getStatus()).isEqualTo(401);
+        assertThat(problem.getType()).isEqualTo(URI.create("https://api.issuetracker.dev/errors/unauthorized"));
+        assertThat(problem.getDetail()).isEqualTo("Credenciais inválidas");
+    }
+
+    @Test
+    void handleAccessDeniedReturns403() {
+        var ex = new AccessDeniedException("forbidden");
+        var problem = handler.handleAccessDenied(ex, request());
+
+        assertThat(problem.getStatus()).isEqualTo(403);
+        assertThat(problem.getType()).isEqualTo(URI.create("https://api.issuetracker.dev/errors/forbidden"));
     }
 }

@@ -9,7 +9,7 @@ spring:
     baseline-on-migrate: true
     baseline-version: 0
     placeholders:
-      admin-password-hash: ${ADMIN_BOOTSTRAP_PASSWORD_HASH:$2b$10$EX0/eIBKN7WrlNZdwG/g7eHjqlD/0NWnev0ivfq4D1sGmiADgcgNe}
+      admin_password_hash: ${ADMIN_BOOTSTRAP_PASSWORD_HASH:$2b$10$EX0/eIBKN7WrlNZdwG/g7eHjqlD/0NWnev0ivfq4D1sGmiADgcgNe}
 
 server:
   port: 8080

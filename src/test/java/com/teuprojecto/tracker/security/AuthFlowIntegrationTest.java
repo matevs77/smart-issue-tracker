@@ -33,7 +33,7 @@ class AuthFlowIntegrationTest {
         registry.add("spring.datasource.url", postgres::getJdbcUrl);
         registry.add("spring.datasource.username", postgres::getUsername);
         registry.add("spring.datasource.password", postgres::getPassword);
-        registry.add("spring.flyway.placeholders.admin-password-hash",
+        registry.add("spring.flyway.placeholders.admin_password_hash",
                 () -> "$2b$10$EX0/eIBKN7WrlNZdwG/g7eHjqlD/0NWnev0ivfq4D1sGmiADgcgNe");
     }
 
