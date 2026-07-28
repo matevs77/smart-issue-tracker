@@ -1,0 +1,19 @@
+---
+description: Visão geral do Smart Issue Tracker — identidade do projeto, stack tecnológica e estrutura modular
+globs:
+alwaysApply: true
+---
+
+# Smart Issue & Task Tracker
+
+Sistema em Java 25 / Spring Boot 3.4, orientado a eventos, com priorização automática de issues via IA (Spring AI). Serve simultaneamente como ferramenta de uso pessoal e peça de portefólio técnico — as métricas de desempenho e precisão divulgadas devem ser sempre empiricamente defensáveis, nunca apenas alegadas.
+
+**Stack obrigatória** (não alterar sem ADR — ver `docs/adr/`): JPA/Hibernate + PostgreSQL · Kafka (event log imutável de domínio) · RabbitMQ (notificações pontuais) · Spring Security + JWT · Virtual Threads (Project Loom) · Prometheus + Grafana · MapStruct · Lombok · Flyway.
+
+**Arquitetura**: hexagonal modular por funcionalidade (ver ADR-02). Cada módulo (`issue`, `comment`, `notification`, `user`) segue a sequência `domain/ → application/ → infrastructure/ → presentation/`.
+
+**Antes de assumires que algo já está implementado**, consulta `docs/STATUS.md` — é o documento volátil que reflete o estado real do código, por oposição ao roteiro planeado.
+
+**Documentos de referência obrigatória**: `docs/01-requirements.md` (requisitos RF/RNF), `docs/03-domain-model.md` (regras de negócio RN-*), `docs/06-api-contract.md` (contrato REST), `docs/adr/README.md` (decisões arquiteturais aceites).
+
+Comunica e documenta sempre em português europeu.

@@ -1,0 +1,14 @@
+---
+description: Disciplina de âmbito e estilo de resposta do agente
+globs:
+alwaysApply: true
+---
+
+# Disciplina de Âmbito
+
+- Antes de codificares uma alteração que atravesse mais de uma camada, explica primeiro o raciocínio arquitetural.
+- Prefere alterações incrementais e testáveis a reescritas amplas.
+- Sinaliza sempre quando uma sugestão implicar alterar a stack tecnológica ou a estrutura de diretórios definida.
+- **Não inventes âmbito autonomamente.** Para uma área de funcionalidade não documentada, apresenta primeiro uma análise com opções e aguarda a decisão antes de implementares — não decidas por conta própria.
+- Scaffolding temporário (uma parte deliberadamente adiada para outra fase) marca-se sempre com `// TODO(Fase X): <descrição curta>`.
+- Segue rigorosamente o âmbito de cada prompt em `docs/Prompts/*.md` (secções Contexto / Instrução / Critério de teste) — não adiantes trabalho de prompts posteriores.

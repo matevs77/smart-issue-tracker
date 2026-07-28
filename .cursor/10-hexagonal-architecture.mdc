@@ -1,0 +1,20 @@
+---
+description: Regras de separação de camadas da arquitetura hexagonal modular
+globs: src/main/java/**/*.java
+alwaysApply: false
+---
+
+# Camadas (ADR-02, ADR-03)
+
+Cada módulo funcional (`issue/`, `comment/`, `notification/`, `user/`) organiza-se estritamente em quatro camadas:
+
+- **`domain/`** — entidades puras (sem anotações JPA/Spring), interfaces de repositório (ports), eventos de domínio, excecções de domínio. Nunca depende de frameworks.
+- **`application/`** — use cases e serviços de aplicação. Depende apenas de interfaces de `domain/`, nunca de classes concretas de `infrastructure/`.
+- **`infrastructure/`** — adaptadores: entidades JPA (`*JpaEntity`), repositórios Spring Data, `*RepositoryAdapter` (implementa a interface do `domain/`), mappers MapStruct (`*Mapper`), producers/consumers Kafka e RabbitMQ, classificadores Spring AI.
+- **`presentation/`** — REST controllers e DTOs (`presentation/dto/`). Nunca acede diretamente a `infrastructure/`; passa sempre pela camada `application/`.
+
+`shared/domain/` contém enums e conceitos transversais entre módulos (`Role`, `IssueStatus`, `IssuePriority`, `NotificationStatus`, `NotificationType`). `shared/infrastructure/` destina-se a configuração transversal (segurança, Flyway, Jackson).
+
+**Regra de conversão**: a passagem entre entidade de domínio e entidade JPA faz-se sempre através de um `Mapper` (MapStruct) — nunca por exposição direta da entidade JPA fora de `infrastructure/`, nem por getters/setters manuais substituindo o mapper.
+
+Antes de alterares esta estrutura (mover ficheiros entre pacotes, achatar camadas, etc.), sinaliza a alteração e o respetivo impacto — não é uma decisão a tomar silenciosamente.

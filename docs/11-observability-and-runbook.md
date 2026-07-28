@@ -52,6 +52,16 @@ scrape_configs:
       - targets: ['app:8080']
 ```
 
+
+### 2.3. Verificação Inicial (Fase 3)
+
+Observação qualitativa realizada após a ativação de Virtual Threads (Prompt 3.1) e implementação do bean `VirtualThreadConfig` (Prompt 3.2):
+
+- **Confirmação de Virtual Threads a servir pedidos HTTP:** Um log DEBUG temporário em `IssueController.findAll` registou `VirtualThread[#74,tomcat-handler-1]/runnable@ForkJoinPool-1-worker-1` durante um pedido GET autenticado a `/api/v1/issues`, confirmando que os pedidos são servidos por Virtual Threads.
+- **Impacto no número de plataform threads:** Antes de uma rajada de 20 pedidos concorrentes, `jvm.threads.live` marcava 30 threads. Após a rajada, o valor subiu para 32 — um aumento de apenas 2 threads de plataforma, demonstrando que as Virtual Threads não escalam o número de platform threads proporcionalmente ao número de pedidos concorrentes.
+
+**Nota:** Esta verificação é exploratória e qualitativa, não substituindo a validação formal de desempenho (RNF-01) reservada para a Fase 8 (JMH/k6). Nenhum dado aqui apresentado deve ser confundido com a métrica de "60% de redução de latência" — essa alegação só pode ser sustentada pelos testes reprodutíveis da Fase 8.
+
 ## 3. Grafana
 
 Dashboard mínimo (JSON em `grafana/dashboards/`):
