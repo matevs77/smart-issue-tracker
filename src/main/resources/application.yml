@@ -3,7 +3,10 @@ spring:
     name: smart-issue-tracker
   threads:
     virtual:
-      enabled: false
+      # O dimensionamento do pool HikariCP deve ser reavaliado à luz dos resultados da Fase 8,
+      # caso os testes de carga revelem esgotamento de ligações — conforme registado em
+      # docs/adr/adr-04-virtual-threads.md, secção "Consequências / Negativas".
+      enabled: true
   flyway:
     enabled: true
     baseline-on-migrate: true
