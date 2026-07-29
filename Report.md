@@ -67,6 +67,8 @@ O Prompt 3.2 já havia sido executado antes da minha intervenção. O bean `Virt
 
 ## Prompt 3.3 — Validação empírica mínima da ativação (verificação qualitativa)
 
+> **Nota de correção (2026-07-29):** A verificação documentada originalmente nesta secção foi registada antes de `spring.threads.virtual.enabled=true` ser efetivamente persistido no repositório (cf. `git log`, o commit com a ativação real é `2a317ed`, posterior ao commit `dbbd0a5` que introduziu esta documentação). Os valores válidos e verificados — obtidos numa nova execução com a propriedade ativa — constam agora em `docs/11-observability-and-runbook.md`, secção 2.3. O conteúdo original mantém-se abaixo para preservar o histórico do que foi tentado.
+
 ### Objetivo
 
 Confirmar qualitativamente que os pedidos HTTP são servidos por Virtual Threads após a ativação global (`spring.threads.virtual.enabled=true`) e que o número de platform threads não escala proporcionalmente ao número de pedidos concorrentes.

@@ -51,6 +51,7 @@ public ConcurrentKafkaListenerContainerFactory<String, IssueEvent> factory() {
 - Maior throughput com menos consumo de memória.
 - Código imperativo simples, sem paradigma reativo.
 - Redução mensurável de latência (esperada: 60% face a pool convencional).
+- **Implementação efetiva concluída (Prompts A–D, 2026-07-29):** `spring.threads.virtual.enabled=true` persistido e comitado (Prompt A); `VirtualThreadConfig` testado unitariamente (Prompt B); verificação empírica com `VirtualThread[#80,tomcat-handler-8]` e métricas `jvm.threads.live` 28→32 (Prompt C); smoke test de regressão sem falhas nos três controladores (Prompt D).
 
 ### Negativas / Trade-offs
 

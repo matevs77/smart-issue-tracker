@@ -1,6 +1,6 @@
 ---
 status: em revisão
-última-atualização: 2026-07-22
+última-atualização: 2026-07-29
 responsável: matevz77
 
 ---
@@ -104,7 +104,7 @@ responsável: matevz77
 |------|--------|-------|
 | KafkaConfig | 📋 | Ficheiro vazio (0 linhas) |
 | RabbitMqConfig | 📋 | Ficheiro vazio (0 linhas) |
-| VirtualThreadConfig | 📋 | Ficheiro vazio (0 linhas) |
+| VirtualThreadConfig | ✅ | Implementado (VirtualThreadConfig.java, 29 linhas, `@Bean` `Executors.newVirtualThreadPerTaskExecutor()` com `destroyMethod = "close"`); testado unitariamente (VirtualThreadConfigTest, Prompt B); ativação global `spring.threads.virtual.enabled=true` confirmada (Prompt A) |
 | ObservabilityConfig | 📋 | Ficheiro vazio (0 linhas) |
 
 ## Shared
@@ -126,7 +126,7 @@ responsável: matevz77
 | Item | Status | Notas |
 |------|--------|-------|
 | TrackerApplication | ⚡ | Implementado (classe de arranque com @SpringBootApplication e main, Prompt 1.4) |
-| application.yml | ⚡ | Implementado (nome, porta 8080, Flyway baseline-on-migrate, virtual threads false) |
+| application.yml | ✅ | Implementado (nome, porta 8080, Flyway baseline-on-migrate, `spring.threads.virtual.enabled=true` — corrigido no Prompt A) |
 | application-dev.yml | ⚡ | Implementado (PostgreSQL localhost:5432, credenciais por env com defaults, ddl-auto=validate) |
 | application-prod.yml | 📋 | Ficheiro vazio (reservado para Fase 9) |
 | V1__create_user_table.sql | ✅ | Implementado (cria tb_users, Prompt A) |
@@ -136,6 +136,24 @@ responsável: matevz77
 | docker-compose.yml | ⚡ | Implementado (apenas postgres:16 com volume postgres-data; sem Kafka/RabbitMQ/Prometheus) |
 | Dockerfile | 📋 | Ficheiro vazio |
 | pom.xml | ✅ | Ficheiro completo com todas as dependências (Spring Boot, Kafka, RabbitMQ, Flyway, Testcontainers, etc.) |
+
+## Smoke Test de Regressão (Prompt D)
+
+Executado em 2026-07-29, após a ativação genuína de `spring.threads.virtual.enabled=true` (Prompt A) e a verificação empírica de Virtual Threads (Prompt C):
+
+| Cenário | Resultado |
+|---------|-----------|
+| `mvn test` (35 testes unitários) | ✅ 35/35 passaram (0 falhas, 0 erros) |
+| `AuthFlowIntegrationTest` | ⚠️ Falha por incompatibilidade de API Docker no ambiente (docker-java 3.4.1 vs Docker 29.x); não é regressão |
+| POST /api/v1/auth/login (admin:ChangeMe123!) | ✅ 200, token JWT válido |
+| GET /api/v1/issues sem token | ✅ 401 UNAUTHORIZED (RFC 7807) |
+| GET /api/v1/issues com token válido | ✅ 200, lista paginada |
+| DELETE /api/v1/issues/{id} por DEVELOPER | ✅ 403 FORBIDDEN (RFC 7807) |
+| GET /api/v1/issues/{id} (IssueController) | ✅ 200, campos corretos |
+| POST /api/v1/issues/{issueId}/comments (CommentController) | ✅ 201, comentário criado com `@AuthenticationPrincipal` |
+| GET /api/v1/notifications (NotificationController) | ✅ 200, lista filtrada por `@AuthenticationPrincipal` |
+
+**Conclusão:** Nenhuma regressão funcional detetada. A leitura de `@AuthenticationPrincipal AuthenticatedPrincipal` mantém-se correta nos três controladores sob Virtual Threads.
 
 ## Notas de Scaffolding
 
