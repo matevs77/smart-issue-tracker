@@ -1,6 +1,6 @@
 ---
 status: em revisão
-última-atualização: 2026-07-29
+última-atualização: 2026-08-07
 responsável: matevz77
 
 ---
@@ -35,8 +35,8 @@ responsável: matevz77
 | DeleteIssueUseCase | ⚡ | Implementado (remove issue em cascata); autorização de Role pendente da Fase 2 (ver Nota de Scaffolding) |
 | IssueClassificationService | 📋 | Ficheiro vazio (0 linhas) |
 | IssueJpaRepository | ✅ | Implementado (extends JpaRepository) |
-| IssueEventPublisher | 📋 | Ficheiro não existe (events/ por criar) |
-| IssueEventConsumer | 📋 | Ficheiro não existe (events/ por criar) |
+| IssueEventPublisher | ⚡ | Implementado (publica IssueCreatedEvent via KafkaTemplate); falha não relança exceção (log apenas); extensão pendente para IssueUpdatedEvent/IssuePrioritizedEvent em fases futuras |
+| IssueEventConsumer | ⚡ | Implementado (@RetryableTopic com DLT automático `issue-events-dlt`, 4 tentativas, backoff exponencial 1s/2s/4s); classificação por IA pendente da Fase 6 |
 | SpringAiClassifier | 📋 | Ficheiro vazio (0 linhas) |
 | IssueController | ✅ | Implementado (POST /, GET /{id}, GET / com filtros e paginação; PATCH /{id}/status, /priority, /assignee, /details e DELETE /{id}); autorização por `@PreAuthorize` concluída na Fase 2 |
 | CreateIssueRequest DTO | ✅ | Implementado (sem reporterId — extraído do SecurityContext via @AuthenticationPrincipal; Fase 2) |
@@ -102,7 +102,7 @@ responsável: matevz77
 
 | Item | Status | Notas |
 |------|--------|-------|
-| KafkaConfig | 📋 | Ficheiro vazio (0 linhas) |
+| KafkaConfig | ⚡ | Implementado (NewTopic `issue-events` 3 partições, ConcurrentKafkaListenerContainerFactory com Virtual Threads) |
 | RabbitMqConfig | 📋 | Ficheiro vazio (0 linhas) |
 | VirtualThreadConfig | ✅ | Implementado (VirtualThreadConfig.java, 29 linhas, `@Bean` `Executors.newVirtualThreadPerTaskExecutor()` com `destroyMethod = "close"`); testado unitariamente (VirtualThreadConfigTest, Prompt B); ativação global `spring.threads.virtual.enabled=true` confirmada (Prompt A) |
 | ObservabilityConfig | 📋 | Ficheiro vazio (0 linhas) |
@@ -116,7 +116,8 @@ responsável: matevz77
 | NotificationStatus | ⚡ | Implementado (shared/domain/, enum) |
 | NotificationType | ⚡ | Implementado (shared/domain/, enum) |
 | Role | ⚡ | Implementado (shared/domain/, enum) |
-| DomainEvent | 📋 | Ficheiro vazio (shared/event/DomainEvent.java) |
+| DomainEvent | ⚡ | Implementado (interface mínima com eventId, eventType, timestamp) |
+| IssueCreatedEvent | ⚡ | Implementado (record com IssueCreatedPayload aninhado, factory `from(Issue)`) |
 | GlobalExceptionHandler | ✅ | Implementado (shared/exception/GlobalExceptionHandler.java — RFC 7807: 400/404/409/422/500); testado unitariamente (GlobalExceptionHandlerTest, Prompt E) |
 | IssueNotFoundException | ⚡ | Implementado (shared/exception/IssueNotFoundException.java — mapeada para 404) |
 | Util classes | 📋 | Pasta vazia |
@@ -133,7 +134,7 @@ responsável: matevz77
 | V2__create_issue_table.sql | ✅ | Implementado (cria tb_issues com FKs, CHECK e índices, Prompt A) |
 | V3__create_comment_table.sql | ✅ | Implementado (cria tb_comments, FK issue_id ON DELETE CASCADE, FK author_id, índices, Prompt 1.4) |
 | V4__create_notification_table.sql | ✅ | Implementado (cria tb_notifications, CHECK type/status, índices, Prompt 1.4) |
-| docker-compose.yml | ⚡ | Implementado (apenas postgres:16 com volume postgres-data; sem Kafka/RabbitMQ/Prometheus) |
+| docker-compose.yml | ⚡ | Implementado (postgres:16 + kafka em modo KRaft de nó único, sem Zookeeper; RabbitMQ/Prometheus/Grafana pendentes de fases futuras) |
 | Dockerfile | 📋 | Ficheiro vazio |
 | pom.xml | ✅ | Ficheiro completo com todas as dependências (Spring Boot, Kafka, RabbitMQ, Flyway, Testcontainers, etc.) |
 

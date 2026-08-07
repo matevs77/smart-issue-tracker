@@ -2,6 +2,7 @@ package com.teuprojecto.tracker.issue.application;
 
 import com.teuprojecto.tracker.issue.domain.Issue;
 import com.teuprojecto.tracker.issue.domain.IssueRepository;
+import com.teuprojecto.tracker.issue.infrastructure.messaging.IssueEventPublisher;
 import com.teuprojecto.tracker.issue.presentation.dto.CreateIssueRequest;
 import com.teuprojecto.tracker.user.domain.User;
 import com.teuprojecto.tracker.user.domain.UserRepository;
@@ -14,10 +15,13 @@ public class CreateIssueUseCase {
 
     private final IssueRepository issueRepository;
     private final UserRepository userRepository;
+    private final IssueEventPublisher eventPublisher;
 
-    public CreateIssueUseCase(IssueRepository issueRepository, UserRepository userRepository) {
+    public CreateIssueUseCase(IssueRepository issueRepository, UserRepository userRepository,
+                              IssueEventPublisher eventPublisher) {
         this.issueRepository = issueRepository;
         this.userRepository = userRepository;
+        this.eventPublisher = eventPublisher;
     }
 
     public Issue execute(CreateIssueRequest request, UUID reporterId) {
@@ -36,6 +40,8 @@ public class CreateIssueUseCase {
             issue.assignTo(assignee);
         }
 
-        return issueRepository.save(issue);
+        var savedIssue = issueRepository.save(issue);
+        eventPublisher.publishIssueCreated(savedIssue);
+        return savedIssue;
     }
 }

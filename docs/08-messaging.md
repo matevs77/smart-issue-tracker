@@ -1,6 +1,6 @@
 ---
 status: estável
-última-atualização: 2026-07-09
+última-atualização: 2026-08-07
 responsável: matevz77
 ---
 
@@ -99,7 +99,7 @@ graph LR
 |-----------|-------|----------|
 | Número de retries | Configurado no `@RetryableTopic` (default: 3) | `x-delivery-count` + DLQ binding |
 | Intervalo entre retries | Exponential backoff (1s, 2s, 4s) | Fixed (5s) |
-| Ação após esgotar | Log + skip (evento permanece no tópico) | Move para DLQ + alerta |
+| Ação após esgotar | Move para tópico *dead-letter* (`issue-events-dlt`) + alerta | Move para DLQ + alerta |
 | Monitorização | Métrica `spring.kafka.listener.*` | Métrica `spring.rabbitmq.listener.*` |
 
 ## 4. Idempotência

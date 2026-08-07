@@ -1,6 +1,6 @@
 ---
 status: estável
-última-atualização: 2026-07-22
+última-atualização: 2026-08-07
 responsável: matevz77
 ---
 
@@ -27,6 +27,7 @@ Um ADR é um documento conciso que regista:
 | 05 | [Fallback na classificação por IA](adr-05-spring-ai-fallback.md) | Proposto |
 | 06 | [Observabilidade desde o início](adr-06-observability-first.md) | Proposto |
 | 07 | [Bootstrap de acesso e claims JWT](adr-07-jwt-bootstrap-e-claims.md) | Aceite |
+| 08 | [Implementação do Kafka: KRaft, serialização e retry](adr-08-kafka-implementacao.md) | Aceite |
 
 ## Como propor um novo ADR
 

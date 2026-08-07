@@ -2,6 +2,7 @@ package com.teuprojecto.tracker.issue.application;
 
 import com.teuprojecto.tracker.issue.domain.Issue;
 import com.teuprojecto.tracker.issue.domain.IssueRepository;
+import com.teuprojecto.tracker.issue.infrastructure.messaging.IssueEventPublisher;
 import com.teuprojecto.tracker.issue.presentation.dto.CreateIssueRequest;
 import com.teuprojecto.tracker.shared.domain.Role;
 import com.teuprojecto.tracker.user.domain.User;
@@ -30,6 +31,9 @@ class CreateIssueUseCaseTest {
     @Mock
     private UserRepository userRepository;
 
+    @Mock
+    private IssueEventPublisher eventPublisher;
+
     @InjectMocks
     private CreateIssueUseCase createIssueUseCase;
 
@@ -47,6 +51,7 @@ class CreateIssueUseCaseTest {
         assertThat(issue.getTitle()).isEqualTo("title");
         assertThat(issue.getReporter()).isEqualTo(reporter);
         verify(issueRepository).save(any(Issue.class));
+        verify(eventPublisher).publishIssueCreated(any(Issue.class));
     }
 
     @Test

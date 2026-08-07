@@ -1,6 +1,6 @@
 ---
 status: estável
-última-atualização: 2026-07-09
+última-atualização: 2026-08-05
 responsável: matevz77
 ---
 
@@ -150,3 +150,5 @@ ENTRYPOINT ["java", "--enable-preview", "-jar", "app.jar"]
 | rabbitmq | rabbitmq:3.13-management | 5672, 15672 | — |
 | prometheus | prom/prometheus:latest | 9090 | — |
 | grafana | grafana/grafana:latest | 3000 | prometheus |
+
+> **Nota:** O serviço `kafka` corre em modo KRaft de nó único (`KAFKA_PROCESS_ROLES=broker,controller`), sem necessidade de Zookeeper. O `CLUSTER_ID` é um identificador base64 fixo gerado uma única vez para o ambiente de desenvolvimento.
